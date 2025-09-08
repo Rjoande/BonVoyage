@@ -17,7 +17,7 @@
 */
 using System.Collections.Generic;
 
-namespace BonVoyage
+namespace BonVoyage.PowerSources
 {
     /// <summary>
     /// Informations about resource for a converter

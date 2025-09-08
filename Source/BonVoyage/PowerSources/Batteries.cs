@@ -16,16 +16,19 @@
 
 */
 
-namespace BonVoyage
+namespace BonVoyage.PowerSources
 {
     /// <summary>
-    /// Informations about propellant for engines
+    /// Information about batteries
     /// </summary>
-    internal class Fuel
+    internal class Batteries
     {
-        internal string Name; // Name of the propellant
-        internal double FuelFlow; // Consumption per second
-        internal double MaximumAmountAvailable; // Maximum amout of the propellant available for usage
-        internal double CurrentAmountUsed; // Current amout of the propellant used by engines
+        internal bool UseBatteries; // Use batteries during a night
+        internal double MaxAvailableEC; // Max EC available from all activated batteries
+        internal double MaxUsedEC; // Max EC we can use
+        internal double ECPerSecondConsumed; // EC per second consumed by wheels
+        internal double ECPerSecondGenerated; // EC per second generated (generated power minus required power)
+        internal double CurrentEC; // Current EC status of batteries
     }
+
 }

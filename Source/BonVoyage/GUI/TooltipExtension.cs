@@ -16,9 +16,11 @@
 
 */
 using UnityEngine;
+
 using KSP.UI.TooltipTypes;
 
-namespace BonVoyage
+
+namespace BonVoyage.UI
 {
     /// <summary>
     /// Extensions for a tooltip of DialogGUI* components

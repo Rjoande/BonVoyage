@@ -18,10 +18,13 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using KSP.UI.Screens;
 using UI;
+
+using KSP.UI.Screens;
 using KSP.Localization;
+
 using ToolbarWrapper;
+using BonVoyage.UI;
 
 namespace BonVoyage
 {

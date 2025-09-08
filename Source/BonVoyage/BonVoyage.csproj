@@ -70,13 +70,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Batteries.cs" />
     <Compile Include="BonVoyage.cs" />
     <Compile Include="BonVoyageModule.cs" />
     <Compile Include="BonVoyageScenario.cs" />
     <Compile Include="BVController.cs" />
-    <Compile Include="Converter.cs" />
-    <Compile Include="Fuel.cs" />
     <Compile Include="GUI\CommonWindowProperties.cs" />
     <Compile Include="GUI\ControlWindowModel.cs" />
     <Compile Include="GUI\ControlWindowView.cs" />
@@ -108,12 +105,18 @@
     <Compile Include="Properties\LegalMamboJambo.cs" />
     <Compile Include="Startup.cs" />
     <Compile Include="Log.cs" />
+    <Compile Include="PowerSources\Converter.cs" />
+    <Compile Include="PowerSources\Batteries.cs" />
+    <Compile Include="PowerSources\Fuel.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Properties\Version.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>Version.cs</LastGenOutput>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="PowerSources\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

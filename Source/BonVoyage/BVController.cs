@@ -15,10 +15,14 @@
 	along with Bon Voyage /L. If not, see <https://www.gnu.org/licenses/>.
 
 */
-using KSP.Localization;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+
+using KSP.Localization;
+
+using BonVoyage.PowerSources;
+
 
 namespace BonVoyage
 {

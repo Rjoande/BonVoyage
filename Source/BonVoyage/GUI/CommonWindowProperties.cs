@@ -18,7 +18,11 @@
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
+
 using TMPro;
+
+using BonVoyage.UI;
+
 
 namespace BonVoyage
 {
