@@ -15,10 +15,6 @@
 	along with Bon Voyage /L. If not, see <https://www.gnu.org/licenses/>.
 
 */
-using System;
-using System.Collections.Generic;
-
-using BonVoyage.PowerSources;
 
 
 namespace BonVoyage
@@ -77,49 +73,9 @@ namespace BonVoyage
                 ConfigNode controllerNode = new ConfigNode("CONTROLLER");
                 controllerNode.AddValue("vesselId", controller.vessel.id);
 
-				{
-					ConfigNode subNode = new ConfigNode("BATTERIES");
-					subNode.AddValue("useBatteries", controller.batteries.UseBatteries);
-					subNode.AddValue("maxUsedEC", controller.batteries.MaxUsedEC);
-					subNode.AddValue("ecPerSecondConsumed", controller.batteries.ECPerSecondConsumed);
-					subNode.AddValue("ecPerSecondGenerated", controller.batteries.ECPerSecondGenerated);
-					subNode.AddValue("currentEC", controller.batteries.CurrentEC);
-					controllerNode.AddNode(subNode);
-				}
-
-				{
-					ConfigNode subNode = new ConfigNode("FUEL_CELLS");
-					subNode.AddValue("useFuelCells", controller.fuelCells.Use);
-					subNode.AddValue("outputEC", controller.fuelCells.OutputValue);
-					List<Resource> res = controller.fuelCells.InputResources;
-					ConfigNode resourceNode;
-					for (int r = 0; r < res.Count; r++)
-					{
-						resourceNode = new ConfigNode("RESOURCE");
-						resourceNode.AddValue("name", res[r].Name);
-						resourceNode.AddValue("ratio", res[r].Ratio);
-						resourceNode.AddValue("maximumAmount", res[r].MaximumAmountAvailable);
-						resourceNode.AddValue("currentAmount", res[r].CurrentAmountUsed);
-						subNode.AddNode(resourceNode);
-					}
-					controllerNode.AddNode(subNode);
-				}
-
-				{
-					ConfigNode subNode = new ConfigNode("PROPELLANTS");
-					List<Fuel> props = controller.propellants;
-					ConfigNode propellantNode;
-					for (int r = 0; r < props.Count; r++)
-					{
-						propellantNode = new ConfigNode("FUEL");
-						propellantNode.AddValue("name", props[r].Name);
-						propellantNode.AddValue("fuelFlow", props[r].FuelFlow);
-						propellantNode.AddValue("maximumAmount", props[r].MaximumAmountAvailable);
-						propellantNode.AddValue("currentAmount", props[r].CurrentAmountUsed);
-						subNode.AddNode(propellantNode);
-					}
-					controllerNode.AddNode(subNode);
-				}
+				controller.solarPower.Write(controllerNode);
+				controller.batteries.Write(controllerNode);
+				controller.fuelCells.Write(controllerNode);
 
                 gameNode.AddNode(controllerNode);
             }
@@ -141,55 +97,9 @@ namespace BonVoyage
                     ConfigNode controllerNode = scenarioNode.GetNode("CONTROLLER", "vesselId", controller.vessel.id.ToString());
                     if (controllerNode != null)
                     {
-						{
-							ConfigNode subNode = controllerNode.GetNode("BATTERIES");
-							if (subNode != null)
-							{
-								controller.batteries.UseBatteries = Convert.ToBoolean(subNode.GetValue("useBatteries"));
-								controller.batteries.MaxUsedEC = Convert.ToDouble(subNode.GetValue("maxUsedEC"));
-								controller.batteries.ECPerSecondConsumed = Convert.ToDouble(subNode.GetValue("ecPerSecondConsumed"));
-								controller.batteries.ECPerSecondGenerated = Convert.ToDouble(subNode.GetValue("ecPerSecondGenerated"));
-								controller.batteries.CurrentEC = Convert.ToDouble(subNode.GetValue("currentEC"));
-							}
-						}
-
-						{
-							ConfigNode subNode = controllerNode.GetNode("FUEL_CELLS");
-							if (subNode != null)
-							{
-								controller.fuelCells.Use = Convert.ToBoolean(subNode.GetValue("useFuelCells"));
-								controller.fuelCells.OutputValue = Convert.ToDouble(subNode.GetValue("outputEC"));
-								var resources = subNode.GetNodes("RESOURCE");
-								controller.fuelCells.InputResources.Clear();
-								for (int r = 0; r < resources.Length; r++)
-								{
-									Resource ir = new Resource();
-									ir.Name = resources[r].GetValue("name");
-									ir.Ratio = Convert.ToDouble(resources[r].GetValue("ratio"));
-									ir.MaximumAmountAvailable = Convert.ToDouble(resources[r].GetValue("maximumAmount"));
-									ir.CurrentAmountUsed = Convert.ToDouble(resources[r].GetValue("currentAmount"));
-									controller.fuelCells.InputResources.Add(ir);
-								}
-							}
-						}
-
-						{ 
-							ConfigNode subNode = controllerNode.GetNode("PROPELLANTS");
-							if (subNode != null)
-							{
-								var propellants = subNode.GetNodes("FUEL");
-								controller.propellants.Clear();
-								for (int r = 0; r < propellants.Length; r++)
-								{
-									Fuel ir = new Fuel();
-									ir.Name = propellants[r].GetValue("name");
-									ir.FuelFlow = Convert.ToDouble(propellants[r].GetValue("fuelFlow"));
-									ir.MaximumAmountAvailable = Convert.ToDouble(propellants[r].GetValue("maximumAmount"));
-									ir.CurrentAmountUsed = Convert.ToDouble(propellants[r].GetValue("currentAmount"));
-									controller.propellants.Add(ir);
-								}
-							}
-						}
+						controller.solarPower.Read(controllerNode);
+						controller.batteries.Read(controllerNode);
+						controller.fuelCells.Read(controllerNode);
                     }
                 }
             }

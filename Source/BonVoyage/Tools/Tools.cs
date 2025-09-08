@@ -112,7 +112,7 @@ namespace BonVoyage
 
             Ray mouseRay = PlanetariumCamera.Camera.ScreenPointToRay(Input.mousePosition);
             mouseRay.origin = ScaledSpace.ScaledToLocalSpace(mouseRay.origin);
-            var bodyToOrigin = mouseRay.origin - targetBody.position;
+			Vector3d bodyToOrigin = mouseRay.origin - targetBody.position;
             double curRadius = targetBody.pqsController.radiusMax;
             double lastRadius = 0;
             int loops = 0;
@@ -121,7 +121,7 @@ namespace BonVoyage
                 Vector3d relSurfacePosition;
                 if (PQS.LineSphereIntersection(bodyToOrigin, mouseRay.direction, curRadius, out relSurfacePosition))
                 {
-                    var surfacePoint = targetBody.position + relSurfacePosition;
+					Vector3d surfacePoint = targetBody.position + relSurfacePosition;
                     double alt = targetBody.pqsController.GetSurfaceHeight(QuaternionD.AngleAxis(targetBody.GetLongitude(surfacePoint), Vector3d.down) * QuaternionD.AngleAxis(targetBody.GetLatitude(surfacePoint), Vector3d.forward) * Vector3d.right);
                     double error = Math.Abs(curRadius - alt);
                     if (error < (targetBody.pqsController.radiusMax - targetBody.pqsController.radiusMin) / 100)
@@ -135,7 +135,7 @@ namespace BonVoyage
                     {
                         lastRadius = curRadius;
                         curRadius = alt;
-                        loops++;
+                        ++loops;
                     }
                 }
                 else
@@ -147,7 +147,7 @@ namespace BonVoyage
                     else // Went too low, needs to try higher
                     {
                         curRadius = (lastRadius * 9 + curRadius) / 10;
-                        loops++;
+                        ++loops;
                     }
                 }
             }
@@ -197,7 +197,7 @@ namespace BonVoyage
             {
                 if (AssemblyLoader.loadedAssemblies[i].name == assemblyName)
                     result = true;
-                i++;
+                ++i;
             }
 
             return result;
@@ -216,7 +216,7 @@ namespace BonVoyage
             {
                 if (AssemblyLoader.loadedAssemblies[i].name == assemblyName)
                     return i;
-                i++;
+                ++i;
             }
             return -1;
         }
@@ -229,8 +229,8 @@ namespace BonVoyage
 
             if (ResearchAndDevelopment.Instance == null)
                 return false;
-            
-            var techstate = ResearchAndDevelopment.Instance.GetTechState(techId);
+
+			ProtoTechNode techstate = ResearchAndDevelopment.Instance.GetTechState(techId);
             if (techstate != null)
                 return techstate.state == RDTech.State.Available;
 

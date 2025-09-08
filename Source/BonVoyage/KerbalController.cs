@@ -15,11 +15,17 @@
 	along with Bon Voyage /L. If not, see <https://www.gnu.org/licenses/>.
 
 */
-using KSP.Localization;
-using KSP.UI.Screens;
 using System;
 using System.Collections.Generic;
+
 using UnityEngine;
+
+using KSP.Localization;
+using KSP.UI.Screens;
+
+using BonVoyage.MovementControllers;
+using BonVoyage.PowerSources;
+
 
 namespace BonVoyage
 {
@@ -27,39 +33,31 @@ namespace BonVoyage
     {
         #region internal properties
 
-        internal override double AverageSpeed { get { return averageSpeed; } }
+        internal override double AverageSpeed { get { return this.moveController.averageSpeed; } }
 
         #endregion
 
 
         #region Private properties
 
-        // Config values
-        private double averageSpeed = 0;
-        private double vesselHeightFromTerrain = 0;
-        // Config values
+		private readonly Controller moveController;
 
-        private double maxSpeedBase; // maximum speed without modifiers
-
-        #endregion
+		#endregion
 
 
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        /// <param name="v"></param>
-        /// <param name="module"></param>
-        internal KerbalController(Vessel v, ConfigNode module) : base(v, module)
-        {
-            // Load values from config if it isn't the first run of the mod (we are reseting vessel on the first run)
-            if (!Configuration.FirstRun)
-            {
-                averageSpeed = double.Parse(BVModule.GetValue("averageSpeed") != null ? BVModule.GetValue("averageSpeed") : "0");
-                vesselHeightFromTerrain = double.Parse(BVModule.GetValue("vesselHeightFromTerrain") != null ? BVModule.GetValue("vesselHeightFromTerrain") : "0");
-            }
+		internal static BVController Create(Vessel vessel, ConfigNode moduleConfigNode)
+		{
+			// TODO: To intantiate the proper PowerSources for the current Installation!
+			Converter fuelCellPowerSource = new SnacksPoweredConverter(vessel);
+			SolarPower solarPowerSource = new NoSolarPower(vessel);
+			Controller moveController = new FootController(vessel, moduleConfigNode);
 
-            maxSpeedBase = 0.5;
-        }
+			return new KerbalController(vessel, moduleConfigNode, fuelCellPowerSource, solarPowerSource, moveController);
+		}
+		protected KerbalController(Vessel v, ConfigNode module, Converter fuelCellPowerSource, SolarPower solarPowerSource, Controller moveController) : base(v, module, fuelCellPowerSource, solarPowerSource)
+		{
+			this.moveController = moveController;
+		}
 
 
         /// <summary>
@@ -82,7 +80,7 @@ namespace BonVoyage
                 new DisplayedSystemCheckResult {
                     Toggle = false,
                     Label = Localizer.Format("#LOC_BV_Control_AverageSpeed"),
-                    Text = averageSpeed.ToString("F") + " m/s",
+                    Text = this.moveController.averageSpeed.ToString("F") + " m/s",
                     Tooltip = ""
                 }
             };
@@ -116,8 +114,8 @@ namespace BonVoyage
         internal override void SystemCheck()
         {
             base.SystemCheck();
-
-            averageSpeed = maxSpeedBase * Math.Pow(9.81 * (vessel.mainBody.Radius * vessel.mainBody.Radius / vessel.mainBody.gravParameter), 1.0 / 3.0);
+			this.fuelCells.Check(100);
+			this.moveController.Check(100);
         }
 
 
@@ -137,10 +135,8 @@ namespace BonVoyage
             BonVoyageModule module = vessel.FindPartModuleImplementing<BonVoyageModule>();
             if (module != null)
             {
-                vesselHeightFromTerrain = vessel.radarAltitude;
-
-                module.averageSpeed = averageSpeed;
-                module.vesselHeightFromTerrain = vesselHeightFromTerrain;
+				module.averageSpeed = this.moveController.averageSpeed;
+				module.vesselHeightFromTerrain = this.moveController.vesselHeightFromTerrain;
             }
 
             return base.Activate();
@@ -155,7 +151,6 @@ namespace BonVoyage
             SystemCheck();
             return base.Deactivate();
         }
-
 
         /// <summary>
         /// Update vessel
@@ -186,13 +181,16 @@ namespace BonVoyage
             }
 
             double deltaT = currentTime - lastTimeUpdated; // Time delta from the last update
+            double deltaTOver = 0; // deltaT which is calculated from a value over the maximum resource amout available
+
+            deltaT = this.fuelCells.Update(deltaT, deltaTOver);
 
             double deltaS = AverageSpeed * deltaT; // Distance delta from the last update
             distanceTravelled += deltaS;
 
             if (distanceTravelled >= distanceToTarget) // We reached the target
             {
-                if (!MoveSafely(targetLatitude, targetLongitude))
+                if (!this.moveController.MoveSafely(targetLatitude, targetLongitude))
                     distanceTravelled -= deltaS;
                 else
                 {
@@ -252,7 +250,7 @@ namespace BonVoyage
                     );
 
                     // Move
-                    if (!MoveSafely(newCoordinates[0], newCoordinates[1]))
+                    if (!this.moveController.MoveSafely(newCoordinates[0], newCoordinates[1]))
                     {
                         distanceTravelled -= deltaS;
                         State = VesselState.Idle;
@@ -265,36 +263,6 @@ namespace BonVoyage
 
             Save(currentTime);
         }
-
-
-        /// <summary>
-        /// Save move of a rover. We need to prevent hitting an active vessel.
-        /// </summary>
-        /// <param name="latitude"></param>
-        /// <param name="longitude"></param>
-        /// <returns>true if rover was moved, false otherwise</returns>
-        private bool MoveSafely(double latitude, double longitude)
-        {
-            double altitude = GeoUtils.TerrainHeightAt(latitude, longitude, vessel.mainBody);
-            if (FlightGlobals.ActiveVessel != null)
-            {
-                Vector3d newPos = vessel.mainBody.GetWorldSurfacePosition(latitude, longitude, altitude);
-                Vector3d actPos = FlightGlobals.ActiveVessel.GetWorldPos3D();
-                double distance = Vector3d.Distance(newPos, actPos);
-                if (distance <= 2400)
-                    return false;
-            }
-
-            vessel.latitude = latitude;
-            vessel.longitude = longitude;
-            if (vessel.situation == Vessel.Situations.SPLASHED)
-                vessel.altitude = vesselHeightFromTerrain;
-            else
-                vessel.altitude = altitude + vesselHeightFromTerrain;
-
-            return true;
-        }
-
 
         /// <summary>
         /// Notify, that Kerbal has arrived

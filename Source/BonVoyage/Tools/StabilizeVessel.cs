@@ -104,9 +104,9 @@ namespace BonVoyage
         {
             v.ResetCollisionIgnores();
 
-            //var from = Vector3d.back; // [0,0,-1]
-            var from = rotationVector;
-            var to = GeoUtils.GetTerrainNormal(v.latitude, v.longitude, v.altitude, v.mainBody);
+			//Vector3d from = Vector3d.back; // [0,0,-1]
+			Vector3d from = rotationVector;
+			Vector3d to = GeoUtils.GetTerrainNormal(v.latitude, v.longitude, v.altitude, v.mainBody);
 
             Quaternion rotation = Quaternion.FromToRotation(from, to);
 
@@ -115,9 +115,9 @@ namespace BonVoyage
         public static void Rotate(Vessel v, Vector3d _rotation)
         {
             v.ResetCollisionIgnores();
-            
-            var from = _rotation;
-            var to = GeoUtils.GetTerrainNormal(v.latitude, v.longitude, v.altitude, v.mainBody);
+
+			Vector3d from = _rotation;
+			Vector3d to = GeoUtils.GetTerrainNormal(v.latitude, v.longitude, v.altitude, v.mainBody);
 
             Quaternion rotation = Quaternion.FromToRotation(from, to);
 

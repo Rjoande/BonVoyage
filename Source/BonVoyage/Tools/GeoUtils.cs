@@ -182,10 +182,8 @@ namespace BonVoyage
             lonStart = PI / 180 * lonStart;
             bearing = PI / 180 * bearing;
 
-            var latEnd = Math.Asin(Math.Sin(latStart) * Math.Cos(distance / radius) +
-                Math.Cos(latStart) * Math.Sin(distance / radius) * Math.Cos(bearing));
-            var lonEnd = lonStart + Math.Atan2(Math.Sin(bearing) * Math.Sin(distance / radius) * Math.Cos(latStart),
-                Math.Cos(distance / radius) - Math.Sin(latStart) * Math.Sin(latEnd));
+			double latEnd = Math.Asin(Math.Sin(latStart) * Math.Cos(distance / radius) + Math.Cos(latStart) * Math.Sin(distance / radius) * Math.Cos(bearing));
+			double lonEnd = lonStart + Math.Atan2(Math.Sin(bearing) * Math.Sin(distance / radius) * Math.Cos(latStart), Math.Cos(distance / radius) - Math.Sin(latStart) * Math.Sin(latEnd));
 
             return new double[] {
                 latEnd * 180.0 / PI,
@@ -206,10 +204,8 @@ namespace BonVoyage
         /// <returns>Latitude and longitude</returns>
         internal static double[] GetLatitudeLongitudeRad(double latStart, double lonStart, double bearing, double distance, double radius)
         {
-            var latEnd = Math.Asin(Math.Sin(latStart) * Math.Cos(distance / radius) +
-                Math.Cos(latStart) * Math.Sin(distance / radius) * Math.Cos(bearing));
-            var lonEnd = lonStart + Math.Atan2(Math.Sin(bearing) * Math.Sin(distance / radius) * Math.Cos(latStart),
-                Math.Cos(distance / radius) - Math.Sin(latStart) * Math.Sin(latEnd));
+			double latEnd = Math.Asin(Math.Sin(latStart) * Math.Cos(distance / radius) + Math.Cos(latStart) * Math.Sin(distance / radius) * Math.Cos(bearing));
+			double lonEnd = lonStart + Math.Atan2(Math.Sin(bearing) * Math.Sin(distance / radius) * Math.Cos(latStart), Math.Cos(distance / radius) - Math.Sin(latStart) * Math.Sin(latEnd));
 
             return new double[] {
                 latEnd,

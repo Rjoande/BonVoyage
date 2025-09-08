@@ -15,30 +15,83 @@
 	along with Bon Voyage /L. If not, see <https://www.gnu.org/licenses/>.
 
 */
+using System;
 using System.Collections.Generic;
 
 namespace BonVoyage.PowerSources
 {
-    /// <summary>
-    /// Informations about resource for a converter
-    /// </summary>
-    internal class Resource
-    {
-        internal string Name; // Name of the resource
-        internal double Ratio; // Consumption per second
-        internal double MaximumAmountAvailable; // Maximum amout of the resource available for usage
-        internal double CurrentAmountUsed; // Current amout of the resource used by a converter
-    }
+	/// <summary>
+	/// Informations about resource for a converter
+	/// </summary>
+	internal class Resource
+	{
+		public readonly string Name;							// Name of the resource
+		public double Ratio  = 0;								// Consumption per second
+		public double MaximumAmountAvailable = 0;				// Maximum amout of the resource available for usage
+		public double CurrentAmountUsed = 0;					// Current amout of the resource used by a converter
+
+		internal Resource(ResourceRatio resourceRatio)
+		{
+			this.Name = resourceRatio.ResourceName;
+			this.Ratio = resourceRatio.Ratio;
+		}
+
+		internal Resource(ConfigNode resourceNode)
+		{
+			this.Name = resourceNode.GetValue("name");
+			this.Ratio = Convert.ToDouble(resourceNode.GetValue("ratio"));
+			this.MaximumAmountAvailable = Convert.ToDouble(resourceNode.GetValue("maximumAmount"));
+			this.CurrentAmountUsed = Convert.ToDouble(resourceNode.GetValue("currentAmount"));
+		}
+
+		public override int GetHashCode() => this.Name.GetHashCode();
+
+		public override bool Equals(object obj)
+		{
+			if (null == obj) return false;
+			if (obj == this) return true;
+			Resource p = obj as Resource;
+			if (null == p) return false;
+			return this.Name.Equals(p.Name);
+		}
+	}
 
 
-    /// <summary>
-    /// Class for fuel cells and engines
-    /// </summary>
-    internal class Converter
-    {
-        internal bool Use; // Use converter
-        internal double OutputValue; // Output value for any output resource (e.g. EC for fuel cells)
-        internal List<Resource> InputResources = new List<Resource>();
-    }
+	/// <summary>
+	/// Class for fuel cells and engines
+	/// </summary>
+	internal abstract class Converter
+	{
+		internal bool Use; // Use converter
+		internal double OutputValue; // Output value for any output resource (e.g. EC for fuel cells)
+		internal readonly List<Resource> InputResources = new List<Resource>();
+		internal readonly HashSet<string> knownInputResources = new HashSet<string>();
 
+		protected readonly Vessel vessel;
+
+		internal Converter(Vessel vessel)
+		{
+			this.vessel = vessel;
+		}
+
+		internal abstract void Read(ConfigNode controllerNode);
+		internal abstract void Write(ConfigNode controllerNode);
+
+		internal abstract void Check(double throttle);
+
+		/// <summary>
+		/// Calculate available power from generators and reactors
+		/// </summary>
+		/// <returns></returns>
+		internal abstract double GetAvailablePower();
+
+		/// <summary>
+		/// Process the available resources, consuming them as demanded.
+		/// </summary>
+		/// <param name="broker"></param>
+		/// <returns>returns true if enough resources available, otherwise false (halting the processing)</returns>
+		internal abstract bool ProcessResources(IResourceBroker broker);
+
+		internal abstract double Update(double deltaT, double deltaTOver);
+	}
 }

@@ -750,12 +750,12 @@ namespace BonVoyage
 
             BVControllers.Clear();
 
-            for (int i = 0; i < FlightGlobals.Vessels.Count; i++)
+            for (int i = 0; i < FlightGlobals.Vessels.Count; ++i)
             {
                 vessel = FlightGlobals.Vessels[i];
                 ConfigNode vesselConfigNode = new ConfigNode();
                 vessel.protoVessel.Save(vesselConfigNode);
-                for (int k = 0; k < vessel.protoVessel.protoPartSnapshots.Count; k++)
+                for (int k = 0; k < vessel.protoVessel.protoPartSnapshots.Count; ++k)
                 {
                     part = vessel.protoVessel.protoPartSnapshots[k];
                     ProtoPartModuleSnapshot module = part.FindModule("BonVoyageModule");
@@ -777,16 +777,16 @@ namespace BonVoyage
                         switch (vesselType)
                         {
                             case "0": // rover
-                                controller = new RoverController(vessel, BVModule);
+                                controller = RoverController.Create(vessel, BVModule);
                                 break;
                             case "1": // ship
-                                controller = new ShipController(vessel, BVModule);
+                                controller = ShipController.Create(vessel, BVModule);
                                 break;
                             case "2": // Kerbal
-                                controller = new KerbalController(vessel, BVModule);
+                                controller = KerbalController.Create(vessel, BVModule);
                                 break;
                             default: // default to rover
-                                controller = new RoverController(vessel, BVModule);
+                                controller = RoverController.Create(vessel, BVModule);
                                 break;
                         }
                         BVControllers[vessel.id] = controller;
@@ -855,8 +855,8 @@ namespace BonVoyage
         /// </summary>
         private void AddScenario()
         {
-            var game = HighLogic.CurrentGame;
-            var psm = game.scenarios.Find(s => s.moduleName == typeof(BonVoyageScenario).Name);
+			Game game = HighLogic.CurrentGame;
+			ProtoScenarioModule psm = game.scenarios.Find(s => s.moduleName == typeof(BonVoyageScenario).Name);
             if (psm == null) // Our scenario doesn't exist => add it to all relevant scenes
             {
                 game.AddProtoScenarioModule(typeof(BonVoyageScenario), GameScenes.FLIGHT, GameScenes.SPACECENTER, GameScenes.TRACKSTATION);
@@ -865,9 +865,9 @@ namespace BonVoyage
             {
                 bool flight = false, space = false, track = false;
                 int count = psm.targetScenes.Count;
-                for (int i = 0; i < count; i++)
+				for (int i = 0; i < count; ++i)
                 {
-                    var s = psm.targetScenes[i];
+					GameScenes s = psm.targetScenes[i];
                     if (s == GameScenes.FLIGHT)
                         flight = true;
                     if (s == GameScenes.SPACECENTER)

@@ -30,7 +30,7 @@ namespace BonVoyage
             if (didScan)
                 return kerbalismFound;
 
-            foreach (var a in AssemblyLoader.loadedAssemblies)
+            foreach (AssemblyLoader.LoadedAssembly a in AssemblyLoader.loadedAssemblies)
             {
                 // Kerbalism comes with more than one assembly. There is Kerbalism for debug builds, KerbalismBootLoader,
                 // then there are Kerbalism18 or Kerbalism16_17 depending on the KSP version, and there might be ohter

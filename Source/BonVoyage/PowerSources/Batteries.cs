@@ -15,6 +15,7 @@
 	along with Bon Voyage /L. If not, see <https://www.gnu.org/licenses/>.
 
 */
+using System;
 
 namespace BonVoyage.PowerSources
 {
@@ -29,6 +30,31 @@ namespace BonVoyage.PowerSources
         internal double ECPerSecondConsumed; // EC per second consumed by wheels
         internal double ECPerSecondGenerated; // EC per second generated (generated power minus required power)
         internal double CurrentEC; // Current EC status of batteries
-    }
+
+		internal void Read(ConfigNode controllerNode)
+		{
+			ConfigNode subNode = controllerNode.GetNode("BATTERIES");
+			if (null == subNode) return;
+
+			this.UseBatteries = Convert.ToBoolean(subNode.GetValue("useBatteries"));
+			this.MaxUsedEC = Convert.ToDouble(subNode.GetValue("maxUsedEC"));
+			this.ECPerSecondConsumed = Convert.ToDouble(subNode.GetValue("ecPerSecondConsumed"));
+			this.ECPerSecondGenerated = Convert.ToDouble(subNode.GetValue("ecPerSecondGenerated"));
+			this.CurrentEC = Convert.ToDouble(subNode.GetValue("currentEC"));
+		}
+
+		internal void Write(ConfigNode controllerNode)
+		{
+			ConfigNode subNode = new ConfigNode("BATTERIES");
+
+			subNode.AddValue("useBatteries", this.UseBatteries);
+			subNode.AddValue("maxUsedEC", this.MaxUsedEC);
+			subNode.AddValue("ecPerSecondConsumed", this.ECPerSecondConsumed);
+			subNode.AddValue("ecPerSecondGenerated", this.ECPerSecondGenerated);
+			subNode.AddValue("currentEC", this.CurrentEC);
+
+			controllerNode.AddNode(subNode);
+		}
+	}
 
 }

@@ -137,16 +137,16 @@ namespace BonVoyage
 
         internal IEnumerable<Hex> GetNeighbours(int x, int y, bool passable = true)
         {
-            var tile = tiles.Find(t => (t.X == x) && (t.Y == y));
-            if (tile == null)
+			Hex tile = tiles.Find(t => (t.X == x) && (t.Y == y));
+            if (null == tile)
                 return null;
 
             List<Hex> neighbours = new List<Hex>();
-            foreach (var direction in directions)
+            foreach (KeyValuePair<int, Point> direction in directions)
             {
                 int dirX = direction.Value.X;
                 int dirY = direction.Value.Y;
-                var neighbour = tiles.Find(n => (n.X == tile.X + dirX) && (n.Y == tile.Y + dirY));
+				Hex neighbour = tiles.Find(n => (n.X == tile.X + dirX) && (n.Y == tile.Y + dirY));
                 if (neighbour == null)
                 {
                     double[] coords = GeoUtils.GetLatitudeLongitude(tile.Latitude, tile.Longitude, tile.Bearing + direction.Key, StepSize, mainBody.Radius);

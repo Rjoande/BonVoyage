@@ -270,7 +270,7 @@ namespace BonVoyage
             foreach (BVController controller in BonVoyage.Instance.BVControllers.Values)
 			{
                 if (controller.Shutdown)
-                    disabledControllersCount++;
+					++disabledControllersCount;
             }
 
             int listLength = 1;
@@ -291,7 +291,7 @@ namespace BonVoyage
                     if (row != null)
                     {
                         list[counter] = row;
-                        counter++;
+                        ++counter;
                         if (counter >= listLength) // break if we are at the end of list
                             break;
                     }

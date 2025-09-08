@@ -80,13 +80,13 @@ namespace BonVoyage
             double timeout = Configuration.PathfinderTimer;
             DateTime startedAt = DateTime.Now;
 
-            var closed = new HashSet<Node>();
-            var queue = new PriorityQueue<double, Path<Node>>();
+			HashSet<Node> closed = new HashSet<Node>();
+			PriorityQueue<double, Path<Node>> queue = new PriorityQueue<double, Path<Node>>();
             queue.Enqueue(0, new Path<Node>(start));
 
             while (!queue.IsEmpty)
             {
-                var path = queue.Dequeue();
+				Path<Node> path = queue.Dequeue();
                 if (closed.Contains(path.LastStep))
                     continue;
                 if (path.LastStep.Equals(destination))
@@ -96,7 +96,7 @@ namespace BonVoyage
                 foreach (Node n in path.LastStep.Neighbours)
                 {
                     double d = distance(path.LastStep, n);
-                    var newPath = path.AddStep(n, d);
+					Path<Node> newPath = path.AddStep(n, d);
                     queue.Enqueue(newPath.TotalCost + estimate(n), newPath);
                 }
 
@@ -127,10 +127,10 @@ namespace BonVoyage
 
         internal V Dequeue()
         {
-            // will throw if there isn’t any first element!
-            var pair = list.First();
-            var v = pair.Value.Dequeue();
-            if (pair.Value.Count == 0) // nothing left of the top priority.
+			// will throw if there isn’t any first element!
+			KeyValuePair<P, Queue<V>> pair = list.First();
+			V v = pair.Value.Dequeue();
+            if (0 == pair.Value.Count) // nothing left of the top priority.
                 list.Remove(pair.Key);
             return v;
         }

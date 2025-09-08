@@ -105,9 +105,17 @@
     <Compile Include="Properties\LegalMamboJambo.cs" />
     <Compile Include="Startup.cs" />
     <Compile Include="Log.cs" />
+    <Compile Include="PowerSources\SolarPower.cs" />
     <Compile Include="PowerSources\Converter.cs" />
     <Compile Include="PowerSources\Batteries.cs" />
     <Compile Include="PowerSources\Fuel.cs" />
+    <Compile Include="MovementControllers\Controller.cs" />
+    <Compile Include="MovementControllers\FootController.cs" />
+    <Compile Include="MovementControllers\WheelController.cs" />
+    <Compile Include="MovementControllers\EngineController.cs" />
+    <Compile Include="PowerSources\SnacksPoweredConverter.cs" />
+    <Compile Include="PowerSources\ElectricityPoweredConverter.cs" />
+    <Compile Include="PowerSources\PropellantPoweredConverter.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Properties\Version.tt">
@@ -117,6 +125,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="PowerSources\" />
+    <Folder Include="MovementControllers\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

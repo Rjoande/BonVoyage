@@ -21,10 +21,9 @@ using UnityEngine;
 
 using KSP.Localization;
 using KSP.UI.Screens;
-using Expansions.Serenity;
 
 using BonVoyage.PowerSources;
-
+using BonVoyage.MovementControllers;
 
 namespace BonVoyage
 {
@@ -35,32 +34,30 @@ namespace BonVoyage
     {
         #region internal properties
 
-        internal override double AverageSpeed { get { return ((angle <= 90) ? (averageSpeed * speedMultiplier) : (averageSpeedAtNight * speedMultiplier)); } }
+        internal override double AverageSpeed { get { return ((angle <= 90) ? (this.moveController.averageSpeed * speedMultiplier) : (averageSpeedAtNight * speedMultiplier)); } }
 
         #endregion
 
 
         #region Private properties
 
+        private readonly Controller moveController;
+
         // Config values
-        private double averageSpeed = 0;
         private double averageSpeedAtNight = 0;
         private bool manned = false;
-        private double vesselHeightFromTerrain = 0;
         // Config values
 
         private double speedMultiplier;
         private double angle; // Angle between the main body and the main sun
-        private double maxSpeedBase; // maximum speed without modifiers
         private int crewSpeedBonus; // Speed modifier based on the available crew
-        EngineTestResult engineTestResult = new EngineTestResult(); // Result of a test of engines
         private int throttle = 100; // Allowed values: 100, 75, 50, 25
 
-        // Basic values
-        private double thrust0 = 350; // 350kN
-        private double speed0 = 50; // 50m/s
-        private double mass0 = 25; // 25t
-        private double density0 = 1.11; // 1.11 - half of density of water plus half of density of air on Kerbin
+		// Basic values
+		private readonly double thrust0 = 350; // 350kN
+		private readonly double speed0 = 50; // 50m/s
+		private readonly double mass0 = 25; // 25t
+		private readonly double density0 = 1.11; // 1.11 - half of density of water plus half of density of air on Kerbin
 
         // Reduction of speed based on difference between required and available power in percents
         private double SpeedReduction
@@ -74,28 +71,31 @@ namespace BonVoyage
             }
         }
 
-        #endregion
+		#endregion
 
 
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        /// <param name="v"></param>
-        /// <param name="module"></param>
-        internal ShipController(Vessel v, ConfigNode module) : base(v, module)
+		internal static BVController Create(Vessel vessel, ConfigNode moduleConfigNode)
+		{
+			// TODO: To intantiate the proper PowerSources for the current Installation!
+			Converter fuelCellPowerSource = new PropellantPoweredConverter(vessel);
+			SolarPower solarPowerSource = new StockSolarPower(vessel);
+			Controller moveController = new EngineController(vessel, moduleConfigNode);
+
+			return new ShipController(vessel, moduleConfigNode, fuelCellPowerSource, solarPowerSource, moveController);
+		}
+		protected ShipController(Vessel v, ConfigNode module, Converter fuelCellPowerSource, SolarPower solarPowerSource, Controller moveController) : base(v, module, fuelCellPowerSource, solarPowerSource)
         {
+			this.moveController = moveController;
+
             // Load values from config if it isn't the first run of the mod (we are reseting vessel on the first run)
             if (!Configuration.FirstRun)
             {
-                averageSpeed = double.Parse(BVModule.GetValue("averageSpeed") != null ? BVModule.GetValue("averageSpeed") : "0");
                 averageSpeedAtNight = double.Parse(BVModule.GetValue("averageSpeedAtNight") != null ? BVModule.GetValue("averageSpeedAtNight") : "0");
                 manned = bool.Parse(BVModule.GetValue("manned") != null ? BVModule.GetValue("manned") : "false");
-                vesselHeightFromTerrain = double.Parse(BVModule.GetValue("vesselHeightFromTerrain") != null ? BVModule.GetValue("vesselHeightFromTerrain") : "0");
             }
 
             speedMultiplier = 1.0;
             angle = 0;
-            maxSpeedBase = 0;
             crewSpeedBonus = 0;
         }
 
@@ -121,11 +121,11 @@ namespace BonVoyage
                 {
                     Toggle = false,
                     Label = Localizer.Format("#LOC_BV_Control_AverageSpeed"),
-                    Text = averageSpeed.ToString("F") + " m/s",
-                    Tooltip = Localizer.Format("#LOC_BV_Control_SpeedBase") + ": " + maxSpeedBase.ToString("F") + " m/s\n"
+                    Text = this.moveController.averageSpeed.ToString("F") + " m/s",
+                    Tooltip = Localizer.Format("#LOC_BV_Control_SpeedBase") + ": " + this.moveController.maxSpeedBase.ToString("F") + " m/s\n"
                         + (manned ? Localizer.Format("#LOC_BV_Control_DriverBonus") + ": " + crewSpeedBonus.ToString() + "%\n" : Localizer.Format("#LOC_BV_Control_UnmannedPenalty") + ": " + GetUnmannedSpeedPenalty().ToString() + "%\n")
                         + Localizer.Format("#LOC_BV_Control_SpeedAtNight") + ": " + averageSpeedAtNight.ToString("F") + " m/s\n"
-                        + Localizer.Format("#LOC_BV_Control_UsedThrust") + ": " + engineTestResult.maxThrustSum.ToString("F") + " kN"
+                        + Localizer.Format("#LOC_BV_Control_UsedThrust") + ": " + ((EngineController)this.moveController).MaxThrust.ToString("F") + " kN"
                 }
             };
             displayedSystemCheckResults.Add(result);
@@ -225,19 +225,6 @@ namespace BonVoyage
         {
             base.SystemCheck();
 
-            // Test engines and rotors
-            EngineTestResult testResultStockEngines = CheckStockEngines();
-            EngineTestResult testResultBGRotors = CheckBGRotors();
-            // Sum it
-            engineTestResult.maxThrustSum = testResultStockEngines.maxThrustSum + testResultBGRotors.maxThrustSum;
-            engineTestResult.powerRequired = testResultStockEngines.powerRequired + testResultBGRotors.powerRequired;
-
-            // Throttle
-            requiredPower = engineTestResult.powerRequired * (Convert.ToDouble(throttle) / 100);
-            engineTestResult.maxThrustSum = engineTestResult.maxThrustSum * (Convert.ToDouble(throttle) / 100);
-            for (int p = 0; p < propellants.Count; p++)
-                propellants[p].FuelFlow = propellants[p].FuelFlow * (Convert.ToDouble(throttle) / 100);
-
             // Manned
             manned = (vessel.GetCrewCount() > 0);
 
@@ -250,7 +237,7 @@ namespace BonVoyage
                 int maxDriverLevel = -1;
 
                 List<ProtoCrewMember> crewList = vessel.GetVesselCrew();
-                for (int i = 0; i < crewList.Count; i++)
+                for (int i = 0; i < crewList.Count; ++i)
                 {
                     switch (crewList[i].trait)
                     {
@@ -277,23 +264,37 @@ namespace BonVoyage
                     crewSpeedBonus = 2 * maxScoutLevel; // up to 10% for a Scout (Scouts disregard safety)
             }
 
-            // Compute max speed - based on the drag equation
-            double Z = (density0 / (0.5 * vessel.mainBody.atmDensityASL + 0.5 * vessel.mainBody.oceanDensity)) * (mass0 / vessel.GetTotalMass()) * (engineTestResult.maxThrustSum / thrust0);
-            maxSpeedBase = Math.Sqrt(Z) * speed0;
-            if (maxSpeedBase > speed0) // We are over max allowed speed, then we need to decrease max available thrust
-            {
-                maxSpeedBase = speed0;
-                engineTestResult.maxThrustSum = engineTestResult.maxThrustSum / Z;
-                requiredPower = requiredPower / Z;
-                for (int p = 0; p < propellants.Count; p++)
-                    propellants[p].FuelFlow = propellants[p].FuelFlow / Z;
-            }
+			{
+				double throttleCap = this.throttle;
 
-            averageSpeed = 0.7 * maxSpeedBase * (1 + Convert.ToDouble(crewSpeedBonus) / 100);
+				if (this.crewSpeedBonus > 0)
+					throttleCap += this.crewSpeedBonus;
+				if (!manned)    // Unmanned rovers drive with the speed penalty based on available tech
+					throttleCap -= this.GetUnmannedSpeedPenalty();
 
-            // Unmanned ships will drive with the speed penalty based on available tech
-            if (!manned)
-                averageSpeed = averageSpeed * (100 - Convert.ToDouble(GetUnmannedSpeedPenalty())) / 100;
+				double dragCap = 0;
+				{
+					// Compute max speed - based on the drag equation
+					double Z = (density0 / (0.5 * vessel.mainBody.atmDensityASL + 0.5 * vessel.mainBody.oceanDensity)) * (mass0 / vessel.GetTotalMass()) * (((EngineController)this.moveController).MaxThrust / thrust0);
+					double maxSpeedBase = Math.Sqrt(Z) * speed0;
+					if (maxSpeedBase > speed0) // We are over max allowed speed, then we need to decrease max available thrust
+						dragCap = (speed0 / maxSpeedBase);
+				}
+
+				// Throttle
+				requiredPower = ((EngineController)this.moveController).MaxThrust * throttleCap;
+
+				// If required power is greater then total power generated, then average speed can be lowered up to 87% (square root of (1 - powerReduction))
+				if (requiredPower > (electricPower_Solar + electricPower_Other))
+				{
+					double powerReduction = (requiredPower - (electricPower_Solar + electricPower_Other)) / requiredPower;
+					if (powerReduction <= 0.75)
+						throttleCap *= (1 - powerReduction);
+				}
+
+				this.moveController.Check(throttleCap*dragCap);
+				this.fuelCells.Check(throttleCap);
+			}
 
             // Cheats
             if (CheatOptions.InfiniteElectricity)
@@ -301,20 +302,9 @@ namespace BonVoyage
 
             // Base average speed at night is the same as average speed, if there is other power source. Zero otherwise.
             if (electricPower_Other > 0.0)
-                averageSpeedAtNight = averageSpeed;
+                averageSpeedAtNight = this.moveController.averageSpeed;
             else
                 averageSpeedAtNight = 0;
-
-            // If required power is greater then total power generated, then average speed can be lowered up to 87% (square root of (1 - powerReduction))
-            if (requiredPower > (electricPower_Solar + electricPower_Other))
-            {
-                double powerReduction = (requiredPower - (electricPower_Solar + electricPower_Other)) / requiredPower;
-                if (powerReduction <= 0.75)
-                {
-                    averageSpeed = averageSpeed * Math.Sqrt(1 - powerReduction);
-                    engineTestResult.maxThrustSum = engineTestResult.maxThrustSum * (1 - powerReduction);
-                }
-            }
 
             // If required power is greater then other power generated, then average speed at night can be lowered up to 87% (square root of (1 - powerReduction))
             if (requiredPower > electricPower_Other)
@@ -326,188 +316,6 @@ namespace BonVoyage
                     averageSpeedAtNight = 0;
             }
         }
-
-
-        #region Engines
-
-        /// <summary>
-        /// Result of the test of wheels
-        /// </summary>
-        private struct EngineTestResult
-        {
-            internal double maxThrustSum; // Sum of max thrusts of all enabled engines
-            internal double powerRequired; // Total power required
-
-            internal EngineTestResult(double maxThrustSum, double powerRequired)
-            {
-                this.maxThrustSum = maxThrustSum;
-                this.powerRequired = powerRequired;
-            }
-        }
-
-
-        /// <summary>
-        /// Test stock engines implementing standard modules ModuleEnginesFX and ModuleEngines
-        /// </summary>
-        /// <returns></returns>
-        private EngineTestResult CheckStockEngines()
-        {
-            double powerRequired = 0;
-            double maxThrustSum = 0;
-            propellants.Clear();
-            
-            // Get jet engines' modules
-            List<Part> jets = new List<Part>();
-            for (int i = 0; i < vessel.parts.Count; i++)
-            {
-                var part = vessel.parts[i];
-                if (part.Modules.Contains("ModuleEnginesFX"))
-                    jets.Add(part);
-            }
-
-            for (int i = 0; i < jets.Count; i++)
-            {
-                List<ModuleEnginesFX> enginesFx = jets[i].FindModulesImplementing<ModuleEnginesFX>();
-                if (enginesFx != null)
-                {
-                    for (int k = 0; k < enginesFx.Count; k++)
-                    {
-                        if (!enginesFx[k].engineShutdown && enginesFx[k].isOperational)
-                        {
-                            // Max thrust
-                            maxThrustSum += enginesFx[k].maxThrust * enginesFx[k].thrustPercentage / 100;
-
-                            // Propellants used in ISP computation - what is not used is usually air
-                            for (int p = 0; p < enginesFx[k].propellants.Count; p++)
-                            {
-                                if (!enginesFx[k].propellants[p].ignoreForIsp)
-                                {
-                                    // For electric engines - save required power and don't add it to propellants
-                                    if (enginesFx[k].propellants[p].name == "ElectricCharge")
-                                    {
-                                        powerRequired += enginesFx[k].getMaxFuelFlow(enginesFx[k].propellants[p]) * enginesFx[k].thrustPercentage / 100;
-                                        continue;
-                                    }
-
-                                    var ir = propellants.Find(x => x.Name == enginesFx[k].propellants[p].name);
-                                    if (ir == null)
-                                    {
-                                        ir = new Fuel();
-                                        ir.Name = enginesFx[k].propellants[p].name;
-                                        propellants.Add(ir);
-                                    }
-                                    ir.FuelFlow += enginesFx[k].getMaxFuelFlow(enginesFx[k].propellants[p]) * enginesFx[k].thrustPercentage / 100;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-
-            // Get rocket engines' modules
-            List<Part> rockets = new List<Part>();
-            for (int i = 0; i < vessel.parts.Count; i++)
-            {
-                var part = vessel.parts[i];
-                if (part.Modules.Contains("ModuleEngines"))
-                    rockets.Add(part);
-            }
-
-            for (int i = 0; i < rockets.Count; i++)
-            {
-                List<ModuleEngines> engines = rockets[i].FindModulesImplementing<ModuleEngines>();
-                for (int k = 0; k < engines.Count; k++)
-                {
-                    if (!engines[k].engineShutdown && engines[k].isOperational)
-                    {
-                        // Max thrust
-                        maxThrustSum += engines[k].MaxThrustOutputAtm(false, true, Convert.ToSingle(vessel.mainBody.atmPressureASL), vessel.atmosphericTemperature, vessel.mainBody.atmDensityASL);
-
-                        // Propellants used in ISP computation - what is not used is usually air
-                        for (int p = 0; p < engines[k].propellants.Count; p++)
-                        {
-                            if (!engines[k].propellants[p].ignoreForIsp)
-                            {
-                                var ir = propellants.Find(x => x.Name == engines[k].propellants[p].name);
-                                if (ir == null)
-                                {
-                                    ir = new Fuel();
-                                    ir.Name = engines[k].propellants[p].name;
-                                    propellants.Add(ir);
-                                }
-                                ir.FuelFlow += engines[k].getMaxFuelFlow(engines[k].propellants[p]) * engines[k].thrustPercentage / 100;
-                            }
-                        }
-                    }
-                }
-            }
-
-
-            return new EngineTestResult(maxThrustSum, powerRequired);
-        }
-
-
-        /// <summary>
-        /// Test Breaking Ground DLC rotors implementing module ModuleRoboticServoRotor
-        /// </summary>
-        /// <returns></returns>
-        private EngineTestResult CheckBGRotors()
-        {
-            double powerRequired = 0;
-            double maxThrustSum = 0;
-
-            // Get rotors
-            List<Part> servoRotor = new List<Part>();
-            for (int i = 0; i < vessel.parts.Count; i++)
-            {
-                var part = vessel.parts[i];
-                if (part.Modules.Contains("ModuleRoboticServoRotor"))
-                    servoRotor.Add(part);
-            }
-
-            for (int i = 0; i < servoRotor.Count; i++)
-            {
-                List<ModuleRoboticServoRotor> rotors = servoRotor[i].FindModulesImplementing<ModuleRoboticServoRotor>();
-                for (int k = 0; k < rotors.Count; k++)
-                {
-                    if (rotors[k].servoIsMotorized && rotors[k].servoMotorIsEngaged)
-                    {
-                        // Max thrust
-                        maxThrustSum += rotors[k].maxMotorOutput * rotors[k].servoMotorSize / 100 / 9; // We need to change max thrust to be in line with the base values for jets
-
-                        for (int r = 0; r < rotors[k].resHandler.inputResources.Count; r++)
-                        {
-                            // Skip Air
-                            if (rotors[k].resHandler.inputResources[r].name == "IntakeAir")
-                                continue;
-
-                            // For EC - save required power and don't add it to propellants
-                            if (rotors[k].resHandler.inputResources[r].name == "ElectricCharge")
-                            {
-                                powerRequired += rotors[k].maxMotorOutput * 4 / 3 * rotors[k].baseResourceConsumptionRate * rotors[k].resHandler.inputResources[r].rate * rotors[k].servoMotorSize / 100;
-                                continue;
-                            }
-
-                            var ir = propellants.Find(x => x.Name == rotors[k].resHandler.inputResources[r].name);
-                            if (ir == null)
-                            {
-                                ir = new Fuel();
-                                ir.Name = rotors[k].resHandler.inputResources[r].name;
-                                propellants.Add(ir);
-                            }
-                            ir.FuelFlow += rotors[k].maxMotorOutput * 4 / 3 * rotors[k].baseResourceConsumptionRate * rotors[k].resHandler.inputResources[r].rate * rotors[k].servoMotorSize / 100;
-                        }
-                    }
-                }
-            }
-
-
-            return new EngineTestResult(maxThrustSum, powerRequired);
-        }
-
-        #endregion
-
 
         /// <summary>
         /// Activate autopilot
@@ -523,7 +331,7 @@ namespace BonVoyage
             SystemCheck();
             
             // At least one engine must be on
-            if (engineTestResult.maxThrustSum == 0)
+            if (0 == ((EngineController)this.moveController).MaxThrust)
             {
                 ScreenMessages.PostScreenMessage(Localizer.Format("#LOC_BV_Warning_EnginesNotOnline"), 5f).color = Color.yellow;
                 return false;
@@ -531,15 +339,10 @@ namespace BonVoyage
 
             // Get fuel amount
             IResourceBroker broker = new ResourceBroker();
-            for (int i = 0; i < propellants.Count; i++)
+            if (!this.fuelCells.ProcessResources(broker))
             {
-                propellants[i].MaximumAmountAvailable = broker.AmountAvailable(vessel.rootPart, propellants[i].Name, 1, ResourceFlowMode.ALL_VESSEL);
-
-                if (propellants[i].MaximumAmountAvailable == 0)
-                {
-                    ScreenMessages.PostScreenMessage(Localizer.Format("#LOC_BV_Warning_NotEnoughFuel"), 5f).color = Color.yellow;
-                    return false;
-                }
+                ScreenMessages.PostScreenMessage(Localizer.Format("#LOC_BV_Warning_NotEnoughFuel"), 5f).color = Color.yellow;
+                return false;
             }
 
             // Power production
@@ -558,13 +361,10 @@ namespace BonVoyage
             BonVoyageModule module = vessel.FindPartModuleImplementing<BonVoyageModule>();
             if (module != null)
             {
-                //vesselHeightFromTerrain = vessel.GetHeightFromSurface();
-                vesselHeightFromTerrain = 0;
-
-                module.averageSpeed = averageSpeed;
+                module.averageSpeed = this.moveController.averageSpeed;
                 module.averageSpeedAtNight = averageSpeedAtNight;
                 module.manned = manned;
-                module.vesselHeightFromTerrain = vesselHeightFromTerrain;
+                module.vesselHeightFromTerrain = this.moveController.vesselHeightFromTerrain;
             }
 
             return base.Activate();
@@ -636,28 +436,14 @@ namespace BonVoyage
             }
 
             if (!CheatOptions.InfinitePropellant)
-            {
-                for (int i = 0; i < propellants.Count; i++)
-                {
-                    propellants[i].CurrentAmountUsed += propellants[i].FuelFlow * deltaT * speedMultiplier * speedMultiplier; // If speed is reduced, then thrust and subsequently fuel flow are reduced by square (from drag equation)
-                    if (propellants[i].CurrentAmountUsed > propellants[i].MaximumAmountAvailable)
-                        deltaTOver = Math.Max(deltaTOver, (propellants[i].CurrentAmountUsed - propellants[i].MaximumAmountAvailable) / (propellants[i].FuelFlow * speedMultiplier * speedMultiplier));
-                }
-                if (deltaTOver > 0)
-                {
-                    deltaT -= deltaTOver;
-                    // Reduce the amount of used propellants
-                    for (int i = 0; i < propellants.Count; i++)
-                        propellants[i].CurrentAmountUsed -= propellants[i].FuelFlow * deltaTOver * speedMultiplier * speedMultiplier;
-                }
-            }
+				deltaT = this.fuelCells.Update(deltaT, deltaTOver);
 
             double deltaS = AverageSpeed * deltaT; // Distance delta from the last update
             distanceTravelled += deltaS;
 
             if (distanceTravelled >= distanceToTarget) // We reached the target
             {
-                if (!MoveSafely(targetLatitude, targetLongitude))
+                if (!this.moveController.MoveSafely(targetLatitude, targetLongitude))
                     distanceTravelled -= deltaS;
                 else
                 {
@@ -717,7 +503,7 @@ namespace BonVoyage
                     );
 
                     // Move
-                    if (!MoveSafely(newCoordinates[0], newCoordinates[1]))
+                    if (!this.moveController.MoveSafely(newCoordinates[0], newCoordinates[1]))
                     {
                         distanceTravelled -= deltaS;
                         State = VesselState.Idle;
@@ -753,32 +539,6 @@ namespace BonVoyage
                 State = VesselState.Idle;
             }
         }
-
-
-        /// <summary>
-        /// Save move of a ship. We need to prevent hitting an active vessel.
-        /// </summary>
-        /// <param name="latitude"></param>
-        /// <param name="longitude"></param>
-        /// <returns>true if rover was moved, false otherwise</returns>
-        private bool MoveSafely(double latitude, double longitude)
-        {
-            if (FlightGlobals.ActiveVessel != null)
-            {
-                Vector3d newPos = vessel.mainBody.GetWorldSurfacePosition(latitude, longitude, 0);
-                Vector3d actPos = FlightGlobals.ActiveVessel.GetWorldPos3D();
-                double distance = Vector3d.Distance(newPos, actPos);
-                if (distance <= 2400)
-                    return false;
-            }
-
-            vessel.latitude = latitude;
-            vessel.longitude = longitude;
-            vessel.altitude = vesselHeightFromTerrain;
-
-            return true;
-        }
-
 
         /// <summary>
         /// Notify, that rover has arrived

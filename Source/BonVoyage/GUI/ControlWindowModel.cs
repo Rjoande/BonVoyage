@@ -351,7 +351,7 @@ namespace BonVoyage
         {
             DialogGUIHorizontalLayout row = new DialogGUIHorizontalLayout();
 
-            for (int i = 0; i < result.Length; i++)
+			for (int i = 0; i < result.Length; ++i)
             {
                 if (result[i].Toggle)
                 {
@@ -395,10 +395,10 @@ namespace BonVoyage
 
                 DialogGUIBase[] list = new DialogGUIBase[1 + resultsList.Count];
                 int index = 0;
-                for (int i = 0; i < resultsList.Count; i++)
+				for (int i = 0; i < resultsList.Count; ++i)
                 {
                     list[index] = CreateListLayoutRow(resultsList[i]);
-                    index++;
+					++index;
                 }
                 list[index] = new DialogGUISpace(3f);
                 statsListLayout = new DialogGUIVerticalLayout(list);
@@ -443,7 +443,7 @@ namespace BonVoyage
             {
                 List<DisplayedSystemCheckResult[]> resultsList = currentController.GetDisplayedSystemCheckResults();
 
-                for (int i = 0; i < resultsList.Count; i++)
+				for (int i = 0; i < resultsList.Count; ++i)
                 {
                     rows.Add(CreateListLayoutRow(resultsList[i]));
                     rows.Last().Create(ref stack, CommonWindowProperties.ActiveSkin); // required to force the GUI creatio﻿n
