@@ -14,12 +14,12 @@ Rovers background processing for KSP.
 	+ [Road Map](https://github.com/net-lisias-ksp/BonVoyage/blob/master/ROAD_MAP.md)
 * Official Distribution Sites:
 <!--	+ [CurseForge](https://kerbal.curseforge.com/projects/BonVoyage) -->
-<!--	+ [SpaceDock](https://spacedock.info/mod/127/BonVoyage) -->
+	+ [SpaceDock](https://spacedock.info/mod/3979/BonVoyage%20/L)
 	+ [Latest Release](https://github.com/net-lisias-ksp/BonVoyage/releases)
 		- [Archive](https://github.com/net-lisias-ksp/BonVoyage/tree/Archive)
 * Support
 	+ [Homepage](http://ksp.lisias.net/add-ons/BonVoyage/Support/) on L Aerospace
-<!--	+ [Forum](https://forum.kerbalspaceprogram.com/index.php?/topic/*-*/) -->
+	+ [Forum](https://forum.kerbalspaceprogram.com/topic/226112-*)
 <!--	+ [Discussions on Github](https://github.com/net-lisias-ksp/BonVoyage/discussions/categories/support) -->
 * [Source](https://github.com/net-lisias-ksp/BonVoyage)
 	+ [Issue Tracker](https://github.com/net-lisias-ksp/BonVoyage/issues)
