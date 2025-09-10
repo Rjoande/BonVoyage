@@ -64,7 +64,8 @@ If the vessel suddenly stops moving, check the distance from the current craft -
 5. Right click on BonVoyage module (or rover cab if you use some cool rover mod listed above)
 6. Click "Pick target on map" or "Set to active target" or "Set to active waypoint"
 7. Path finding may take some time, be patient (C# is not the power horse :D).
-8. You can go to map mode and see built route for inspection
+8. ~~You can go to map mode and see built route for inspection~~
+	* [M.I.A.](https://github.com/net-lisias-ksp/BonVoyage/issues/10)
 9. If path was not found in ten seconds it will break, try some closer point
 10. Click "Poehali!!!"
 11. Go to tracking station...or launch a new vessel...or do whatever you want...

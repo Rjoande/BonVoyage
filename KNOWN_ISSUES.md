@@ -2,3 +2,5 @@
 
 * Module solar power calculation won't work if Sun is not central body of the system.
 * Malemute and Karibou do not implement ModuleWheelDamage, so your rover can be turned upside down and BonVoyage will still drive it... isn't that FUN????
+* The trajectory plotting on Map View is missing from the code.
+	+ https://github.com/net-lisias-ksp/BonVoyage/issues/10
