@@ -65,8 +65,8 @@ namespace BonVoyage
             get
             {
                 double speedReduction = 0;
-                if (requiredPower > (electricPower_Solar + electricPower_Other))
-                    speedReduction = Math.Sqrt((requiredPower - (electricPower_Solar + electricPower_Other)) / requiredPower) * 100;
+				if (this.requiredPower > this.electricPower)
+					speedReduction = Math.Sqrt((this.requiredPower - this.electricPower) / this.requiredPower) * 100;
                 return speedReduction;
             }
         }
@@ -137,7 +137,7 @@ namespace BonVoyage
                     new DisplayedSystemCheckResult {
                         Toggle = false,
                         Label = Localizer.Format("#LOC_BV_Control_ElectricPower"),
-                        Text = requiredPower.ToString("F") + " / " + (electricPower_Solar + electricPower_Other).ToString("F"),
+						Text = this.requiredPower.ToString("F") + " / " + this.electricPower.ToString("F"),
                         Tooltip = Localizer.Format("#LOC_BV_Control_RequiredPower") + ": " + requiredPower.ToString("F")
                             + (speedReduction == 0 ? "" :
                                 (((speedReduction > 0) && (speedReduction <= 87))
@@ -285,9 +285,9 @@ namespace BonVoyage
 				requiredPower = ((EngineController)this.moveController).MaxThrust * throttleCap;
 
 				// If required power is greater then total power generated, then average speed can be lowered up to 87% (square root of (1 - powerReduction))
-				if (requiredPower > (electricPower_Solar + electricPower_Other))
+				if (this.requiredPower > this.electricPower)
 				{
-					double powerReduction = (requiredPower - (electricPower_Solar + electricPower_Other)) / requiredPower;
+					double powerReduction = (this.requiredPower - this.electricPower) / this.requiredPower;
 					if (powerReduction <= 0.75)
 						throttleCap *= (1 - powerReduction);
 				}
@@ -346,10 +346,10 @@ namespace BonVoyage
             }
 
             // Power production
-            if (requiredPower > (electricPower_Solar + electricPower_Other))
+			if (this.requiredPower > this.electricPower)
             {
                 // If required power is greater than total power generated, then average speed can be lowered up to 87% (square root of (1 - powerReduction))
-                double powerReduction = (requiredPower - (electricPower_Solar + electricPower_Other)) / requiredPower;
+				double powerReduction = (this.requiredPower - this.electricPower) / this.requiredPower;
 
                 if (powerReduction > 0.75)
                 {

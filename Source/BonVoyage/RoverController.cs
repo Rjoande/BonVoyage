@@ -57,8 +57,8 @@ namespace BonVoyage
             get
             {
                 double speedReduction = 0;
-                if (requiredPower > (electricPower_Solar + electricPower_Other))
-                    speedReduction = (requiredPower - (electricPower_Solar + electricPower_Other)) / requiredPower * 100;
+				if (this.requiredPower > this.electricPower)
+					speedReduction = (this.requiredPower - this.electricPower) / this.requiredPower * 100;
                 return speedReduction;
             }
         }
@@ -131,7 +131,7 @@ namespace BonVoyage
                 new DisplayedSystemCheckResult {
                     Toggle = false,
                     Label = Localizer.Format("#LOC_BV_Control_GeneratedPower"),
-                    Text = (electricPower_Solar + electricPower_Other).ToString("F"),
+					Text = this.electricPower.ToString("F"),
                     Tooltip = Localizer.Format("#LOC_BV_Control_SolarPower") + ": " + electricPower_Solar.ToString("F") + "\n" + Localizer.Format("#LOC_BV_Control_GeneratorPower") + ": " + electricPower_Other.ToString("F") + "\n"
                         + Localizer.Format("#LOC_BV_Control_UseBatteries_Usage") + ": " + (batteries.UseBatteries ? (batteries.MaxUsedEC.ToString("F0") + " / " + batteries.MaxAvailableEC.ToString("F0") + " EC") : Localizer.Format("#LOC_BV_Control_No"))
                 }
@@ -268,9 +268,9 @@ namespace BonVoyage
 					throttleCap -= this.GetUnmannedSpeedPenalty();
 
 				// If required power is greater then total power generated, then average speed can be lowered up to 75%
-				if (this.requiredPower > (this.electricPower_Solar + this.electricPower_Other))
+				if (this.requiredPower > this.electricPower)
 				{
-					double speedReduction = (requiredPower - (electricPower_Solar + electricPower_Other)) / requiredPower;
+					double speedReduction = (this.requiredPower - this.electricPower) / this.requiredPower;
 					if (speedReduction <= 0.75)
 						throttleCap *= (1 - speedReduction);
 					else
@@ -306,14 +306,14 @@ namespace BonVoyage
                 batteries.ECPerSecondGenerated = 0;
 
                 // We have enough of solar power to recharge batteries
-                if (requiredPower < (electricPower_Solar + electricPower_Other))
+				if (this.requiredPower < this.electricPower)
                 {
                     batteries.ECPerSecondConsumed = Math.Max(requiredPower - electricPower_Other, 0); // If there is more other power than required power, we don't need batteries
                     batteries.MaxUsedEC = batteries.MaxAvailableEC / 2; // We are using only half of max available EC
                     if (batteries.ECPerSecondConsumed > 0)
                     {
                         double halfday = vessel.mainBody.rotationPeriod / 2; // in seconds
-                        batteries.ECPerSecondGenerated = electricPower_Solar + electricPower_Other - requiredPower;
+						this.batteries.ECPerSecondGenerated = this.electricPower - this.requiredPower;
                         batteries.MaxUsedEC = Math.Min(batteries.MaxUsedEC, batteries.ECPerSecondConsumed * halfday); // get lesser value of MaxUsedEC and EC consumed per night
                         batteries.MaxUsedEC = Math.Min(batteries.MaxUsedEC, batteries.ECPerSecondGenerated * halfday); // get lesser value of MaxUsedEC and max EC available for recharge during a day
                     }
@@ -407,10 +407,10 @@ namespace BonVoyage
             }
 
             // Power production
-            if (requiredPower > (electricPower_Solar + electricPower_Other))
+			if (this.requiredPower > this.electricPower)
             {
                 // If required power is greater than total power generated, then average speed can be lowered up to 75%
-                double speedReduction = (requiredPower - (electricPower_Solar + electricPower_Other)) / requiredPower;
+				double speedReduction = (this.requiredPower - this.electricPower) / this.requiredPower;
 
                 if (speedReduction > 0.75)
                 {
