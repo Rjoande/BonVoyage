@@ -43,7 +43,7 @@ namespace BonVoyage
         /// Constructor
         /// </summary>
         internal MainWindowView(MainWindowModel m, SettingsCallback settings, ControlCallback control, UnityAction close) : base(
-            CommonWindowProperties.mainListMinWidth + 20, // min width
+            CommonWindowProperties.mainListMinWidth + 40, // min width
             CommonWindowProperties.mainListMinHeight, // min height
             CommonWindowProperties.mainWindowSpacing, // spacing
             CommonWindowProperties.mainElementPadding, // padding

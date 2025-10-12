@@ -428,6 +428,8 @@ namespace BonVoyage
                 module.vesselHeightFromTerrain = this.moveController.vesselHeightFromTerrain;
             }
 
+			this.engageBrakesOrNot(true);
+
             return base.Activate();
         }
 
@@ -711,6 +713,11 @@ namespace BonVoyage
                 batteries.UseBatteries = true;
         }
 
+		private void engageBrakesOrNot(bool v)
+		{
+			if (Configuration.AutoEngageBreaks)
+				FlightGlobals.ActiveVessel.ActionGroups.SetGroup(KSPActionGroup.Brakes, v);
+		}
     }
 
 }

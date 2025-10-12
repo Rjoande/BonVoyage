@@ -55,6 +55,7 @@ namespace BonVoyage
             AddChild(TooltipExtension.DeferTooltip(new DialogGUIToggle(model.GetDewarpToggleState(), Localizer.Format("#LOC_BV_AutomaticDewarp"), model.DewarpChecked, 130f) { tooltipText = Localizer.Format("#LOC_BV_AutomaticDewarp_Tooltip") }));
             AddChild(TooltipExtension.DeferTooltip(new DialogGUIToggle(model.GeDisableRotationToggleState(), Localizer.Format("#LOC_BV_DisableRotation"), model.DisableRotationChecked, 130f) { tooltipText = Localizer.Format("#LOC_BV_DisableRotation_Tooltip") }));
             AddChild(TooltipExtension.DeferTooltip(new DialogGUIToggle(model.GeShowBiomeToggleState(), Localizer.Format("#LOC_BV_ShowBiome"), model.ShowBiomeChecked, 130f) { tooltipText = Localizer.Format("#LOC_BV_ShowBiome_Tooltip") }));
+            AddChild(TooltipExtension.DeferTooltip(new DialogGUIToggle(model.GetAutoEngageBreaksState(), Localizer.Format("#LOC_BV_AutoEngageBreaks"), model.AutoEngageBreaksChecked, 130f) { tooltipText = Localizer.Format("#LOC_BV_AutoEngageBreaks_Tooltip") }));
 
             AddChild(new DialogGUIBox("", 140f, 80f, null,
                 new DialogGUIVerticalLayout(140f, 80f, CommonWindowProperties.settingsWindowSpacing, CommonWindowProperties.boxPadding, TextAnchor.UpperLeft,
@@ -98,7 +99,7 @@ namespace BonVoyage
             {
                 return new Rect(
                     (mainWindowPosition.x / GameSettings.UI_SCALE + CommonWindowProperties.mainWindowWidth / 2 + CommonWindowProperties.settingsWindowWidth / 2) / Screen.width + 0.5f,
-                    (mainWindowPosition.y / GameSettings.UI_SCALE + CommonWindowProperties.mainWindowHeight / 2 - CommonWindowProperties.settingsWindowHeight / 2 - 11) / Screen.height + 0.5f, 
+                    (mainWindowPosition.y / GameSettings.UI_SCALE + CommonWindowProperties.mainWindowHeight / 2 - CommonWindowProperties.settingsWindowHeight / 2 - 28) / Screen.height + 0.5f, 
                     CommonWindowProperties.settingsWindowWidth, CommonWindowProperties.settingsWindowHeight);
             }
         }

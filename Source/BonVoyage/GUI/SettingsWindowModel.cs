@@ -30,6 +30,7 @@ namespace BonVoyage
         private bool dewarpChecked = false;
         private bool disableRotation = false;
         private bool showBiome = false;
+        private bool autoEngageBreaks = true;
         private bool kspSkin = true;
         private bool kspToolbarChecked = true;
         private bool toolbarContinuedChecked = false;
@@ -121,6 +122,17 @@ namespace BonVoyage
 
 
         /// <summary>
+        /// Auto engage breaks checkbox
+        /// </summary>
+        /// <param name="value"></param>
+        internal void AutoEngageBreaksChecked(bool value)
+        {
+            this.autoEngageBreaks = value;
+            Configuration.AutoEngageBreaks = value;
+        }
+
+
+        /// <summary>
         /// Get the state of show biome toggle
         /// </summary>
         /// <returns></returns>
@@ -128,6 +140,12 @@ namespace BonVoyage
         {
             return showBiome;
         }
+
+        /// <summary>
+        /// Get the state of Auto Engage Breaks toggle
+        /// </summary>
+        /// <returns></returns>
+        internal bool GetAutoEngageBreaksState() => this.autoEngageBreaks;
 
 
         /// <summary>

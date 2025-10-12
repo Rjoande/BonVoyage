@@ -185,6 +185,19 @@ namespace BonVoyage
 
 
         /// <summary>
+        /// Auto engage breaks on rovers.
+        /// </summary>
+        internal static bool AutoEngageBreaks
+        {
+            get { return configuration.GetValue<bool>("autoEngageBreaks", true); }
+            set
+            {
+                configuration.SetValue("autoEngageBreaks", value);
+                configuration.save();
+            }
+        }
+
+        /// <summary>
         /// Show biome on map
         /// </summary>
         internal static double PathfinderTimer
