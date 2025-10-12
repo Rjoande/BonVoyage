@@ -34,7 +34,7 @@ namespace BonVoyage
     {
         #region internal properties
 
-        internal override double AverageSpeed { get { return ((angle <= 90) || (batteries.UseBatteries && (batteries.CurrentEC > 0)) ? (this.moveController.averageSpeed * speedMultiplier) : (averageSpeedAtNight * speedMultiplier)); } }
+		internal override double AverageSpeed { get { return ((this.angle <= 90) || (this.batteries.Use && (this.batteries.CurrentEC > 0)) ? (this.moveController.averageSpeed * this.speedMultiplier) : (this.averageSpeedAtNight * this.speedMultiplier)); } }
 
 		#endregion
 
@@ -131,7 +131,7 @@ namespace BonVoyage
                     Label = Localizer.Format("#LOC_BV_Control_GeneratedPower"),
 					Text = this.electricPower.ToString("F"),
                     Tooltip = Localizer.Format("#LOC_BV_Control_SolarPower") + ": " + electricPower_Solar.ToString("F") + "\n" + Localizer.Format("#LOC_BV_Control_GeneratorPower") + ": " + electricPower_Other.ToString("F") + "\n"
-                        + Localizer.Format("#LOC_BV_Control_UseBatteries_Usage") + ": " + (batteries.UseBatteries ? (batteries.MaxUsedEC.ToString("F0") + " / " + batteries.MaxAvailableEC.ToString("F0") + " EC") : Localizer.Format("#LOC_BV_Control_No"))
+						+ Localizer.Format("#LOC_BV_Control_UseBatteries_Usage") + ": " + (this.batteries.Use ? (this.batteries.MaxUsedEC.ToString("F0") + " / " + this.batteries.MaxAvailableEC.ToString("F0") + " EC") : Localizer.Format("#LOC_BV_Control_No"))
 						+ Localizer.Format("#LOC_BV_Control_UseSolarPanels_Usage") + ": " + (solarPower.Use ? Localizer.Format("#LOC_BV_Control_Yes") : Localizer.Format("#LOC_BV_Control_No"))
                 }
             };
@@ -204,7 +204,7 @@ namespace BonVoyage
             requiredPower = ((WheelController)this.moveController).PowerRequired / 100 * 35;
 
             // Get available EC from batteries
-            if (batteries.UseBatteries)
+			if (this.batteries.Use)
                 batteries.MaxAvailableEC = GetAvailableEC_Batteries();
             else
                 batteries.MaxAvailableEC = 0;
@@ -295,7 +295,7 @@ namespace BonVoyage
             }
 
             // If we are using batteries, compute for how long and how much EC we can use
-            if (batteries.UseBatteries)
+			if (this.batteries.Use)
             {
                 batteries.MaxUsedEC = 0;
                 batteries.ECPerSecondConsumed = 0;
@@ -486,7 +486,7 @@ namespace BonVoyage
             double deltaTOver = 0; // deltaT which is calculated from a value over the maximum resource amout available
 
             // Compute increase or decrease in EC from the last update
-            if (!CheatOptions.InfiniteElectricity && batteries.UseBatteries && !DetectKerbalism.Found())
+			if (!CheatOptions.InfiniteElectricity && this.batteries.Use && !DetectKerbalism.Found())
             {
                 // Process fuel cells before batteries
                 if (!CheatOptions.InfinitePropellant 
@@ -506,7 +506,7 @@ namespace BonVoyage
             }
 
             // No moving at night, if there isn't enough power
-            if ((angle > 90) && (averageSpeedAtNight == 0.0) && !(batteries.UseBatteries && (batteries.CurrentEC > 0)))
+			if ((this.angle > 90) && (this.averageSpeedAtNight == 0.0) && !(this.batteries.Use && (this.batteries.CurrentEC > 0)))
             {
                 State = VesselState.AwaitingSunlight;
                 lastTimeUpdated = currentTime;
@@ -593,7 +593,7 @@ namespace BonVoyage
             Save(currentTime);
 
             // Stop the rover, we don't have enough of fuel
-            if (deltaTOver > 0 || (!CheatOptions.InfiniteElectricity && batteries.UseBatteries && batteries.CurrentEC <= 0.1))
+			if (deltaTOver > 0 || (!CheatOptions.InfiniteElectricity && this.batteries.Use && this.batteries.CurrentEC <= 0.1))
             {
                 active = false;
                 arrived = true;
@@ -611,7 +611,7 @@ namespace BonVoyage
                     ScreenMessages.PostScreenMessage(vessel.vesselName + " " + Localizer.Format("#LOC_BV_Warning_Stopped") + ".", 5f).color = Color.red;
                 }
 
-                if (!CheatOptions.InfiniteElectricity && batteries.UseBatteries && batteries.CurrentEC <= 0.1)
+				if (!CheatOptions.InfiniteElectricity && this.batteries.Use && this.batteries.CurrentEC <= 0.1)
                     NotifyBatteryEmpty();
 				else
 	                NotifyNotEnoughFuel();
@@ -672,7 +672,7 @@ namespace BonVoyage
         /// <returns></returns>
         internal bool GetUseBatteries()
         {
-            return batteries.UseBatteries;
+            return batteries.Use;
         }
 
 
@@ -682,7 +682,7 @@ namespace BonVoyage
         /// <param name="value"></param>
         internal void UseBatteriesChanged(bool value)
         {
-            batteries.UseBatteries = value;
+			this.batteries.Use = value;
             if (!value)
                 fuelCells.Use = false;
         }
@@ -706,7 +706,7 @@ namespace BonVoyage
         {
             fuelCells.Use = value;
             if (value)
-                batteries.UseBatteries = true;
+				this.batteries.Use = true;
         }
 
 		private void engageBrakesOrNot(bool v)
