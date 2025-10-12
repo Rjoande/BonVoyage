@@ -24,10 +24,12 @@ namespace BonVoyage.PowerSources
 		internal bool AutoDeploy;
 		internal bool DriveWhenDeployed;
 
+		protected int mainStarIndex; // Vessel's main star's index in the FlightGlobals.Bodies
 		protected readonly Vessel vessel;
 
 		internal SolarPower(Vessel vessel)
 		{
+			this.mainStarIndex = 0; // In the most cases The Sun
 			this.vessel = vessel;
 		}
 
@@ -38,7 +40,9 @@ namespace BonVoyage.PowerSources
 		/// Calculate available power from solar panels
 		/// </summary>
 		/// <returns></returns>
-		internal abstract double GetAvailablePower(CelestialBody mainStar);
+		internal double GetAvailablePower() => this.calculateAvailablePower();
+
+		protected abstract double calculateAvailablePower();
 	}
 
 	internal class NoSolarPower : SolarPower
@@ -47,7 +51,7 @@ namespace BonVoyage.PowerSources
 		{
 		}
 
-		internal override double GetAvailablePower(CelestialBody mainStar)
+		protected override double calculateAvailablePower()
 		{
 			return 0;
 		}
@@ -60,6 +64,7 @@ namespace BonVoyage.PowerSources
 	{
 		internal StockSolarPower(Vessel vessel) : base(vessel)
 		{
+			this.mainStarIndex = Tools.GetMainStar(vessel).flightGlobalsIndex;
 		}
 
 		internal override void Read(ConfigNode controllerNode)
@@ -69,7 +74,7 @@ namespace BonVoyage.PowerSources
 
 			this.Use = Convert.ToBoolean(subNode.GetValue("useSolarPower") ?? "true");
 			this.AutoDeploy = Convert.ToBoolean(subNode.GetValue("autoDeploy" ?? "false"));
-			this.DriveWhenDeployed = Convert.ToBoolean(subNode.GetValue("driveWhenDeployed" ?? "true"));
+			this.DriveWhenDeployed = Convert.ToBoolean(subNode.GetValue("driveWhenDeployed" ?? "false"));
 		}
 
 		internal override void Write(ConfigNode controllerNode)
@@ -81,11 +86,13 @@ namespace BonVoyage.PowerSources
 			controllerNode.AddNode(subNode);
 		}
 
-		internal override double GetAvailablePower(CelestialBody mainStar)
+		protected override double calculateAvailablePower()
 		{
+			if (!this.Use) return 0;
+
 			// Kopernicus sets the right values for PhysicsGlobals.SolarLuminosity and PhysicsGlobals.SolarLuminosityAtHome so we can use them in all cases
 			double solarPower = 0;
-			double distanceToSun = Vector3d.Distance(this.vessel.GetWorldPos3D(), mainStar.position);
+			double distanceToSun = Vector3d.Distance(this.vessel.GetWorldPos3D(), FlightGlobals.Bodies[mainStarIndex].position);
 			double solarFlux = PhysicsGlobals.SolarLuminosity / (4 * Math.PI * distanceToSun * distanceToSun); // f = L / SA = L / 4π r2 (Wm-2)
 			float multiplier = 1;
 

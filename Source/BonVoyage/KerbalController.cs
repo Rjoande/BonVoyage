@@ -79,7 +79,7 @@ namespace BonVoyage
 			DisplayedSystemCheckWidget[] result = new DisplayedSystemCheckWidget[] {
 				new DisplayedSystemCheckWidget {
                     Label = Localizer.Format("#LOC_BV_Control_AverageSpeed"),
-                    Text = this.moveController.averageSpeed.ToString("F") + " m/s",
+                    Text = this.moveController.averageSpeedAsText,
                     Tooltip = ""
                 }
             };

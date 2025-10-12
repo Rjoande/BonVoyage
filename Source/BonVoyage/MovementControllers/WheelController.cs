@@ -166,9 +166,9 @@ namespace BonVoyage.MovementControllers
 					// Wheel is on
 					if (wheelMotor.motorEnabled)
 					{
-						powerRequired += wheelMotor.avgResRate;
-						++online;
+						powerRequired += wheelMotor.avgResRate * (wheelMotor.driveLimiter / 100);
 						maxSpeedSum += wheelMotor.GetMaxSpeed() * (wheelMotor.driveLimiter / 100);
+						++online;
 					}
 				}
 			}

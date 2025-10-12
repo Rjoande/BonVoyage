@@ -24,9 +24,10 @@ namespace BonVoyage.PowerSources
     /// </summary>
     internal class Batteries
     {
-        internal bool Use; // Use batteries during a night
+		internal bool Use; // Use batteries during a night
+		internal bool AllowNoGeneratedPower; // Allows rovering when there's no active source of EC.
         internal double MaxAvailableEC; // Max EC available from all activated batteries
-		internal double UseableECPercent;
+		internal double UseableECPercent = 0.5; // By default, we are using only half of max available EC;
         internal double MaxUsedEC; // Max EC we can use
         internal double ECPerSecondConsumed; // EC per second consumed by wheels
         internal double ECPerSecondGenerated; // EC per second generated (generated power minus required power)
@@ -38,6 +39,7 @@ namespace BonVoyage.PowerSources
 			if (null == subNode) return;
 
 			this.Use = Convert.ToBoolean(subNode.GetValue("useBatteries"));
+			this.AllowNoGeneratedPower = Convert.ToBoolean(subNode.GetValue("allowNoGeneratedPower" ?? "False"));
 			this.MaxUsedEC = Convert.ToDouble(subNode.GetValue("maxUsedEC"));
 			this.UseableECPercent = Convert.ToDouble(subNode.GetValue("useableECPercent") ?? "0.5"); // By default, we are using only half of max available EC
 			this.ECPerSecondConsumed = Convert.ToDouble(subNode.GetValue("ecPerSecondConsumed"));
@@ -50,6 +52,7 @@ namespace BonVoyage.PowerSources
 			ConfigNode subNode = new ConfigNode("BATTERIES");
 
 			subNode.AddValue("useBatteries", this.Use);
+			subNode.AddValue("allowNoGeneratedPower", this.AllowNoGeneratedPower);
 			subNode.AddValue("maxUsedEC", this.MaxUsedEC);
 			subNode.AddValue("useableECPercent", this.UseableECPercent);
 			subNode.AddValue("ecPerSecondConsumed", this.ECPerSecondConsumed);

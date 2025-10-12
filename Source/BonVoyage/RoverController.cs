@@ -53,15 +53,25 @@ namespace BonVoyage
 
 		// Reduction of speed based on difference between required and available power in percents
 		private double SpeedReduction
-        {
-            get
-            {
-                double speedReduction = 0;
-				if (this.requiredPower > this.electricPower)
-					speedReduction = (this.requiredPower - this.electricPower) / this.requiredPower * 100;
-                return speedReduction;
-            }
-        }
+		{
+			get
+			{
+				double speedReduction = 0;
+				if (this.batteries.AllowNoGeneratedPower)
+				{
+					// Total energy consumed by a whol enight driving.
+					double totalEcNight = this.batteries.ECPerSecondConsumed * this.vessel.mainBody.rotationPeriod / 2; // half a day in seconds;
+					if (totalEcNight > this.batteries.MaxUsedEC)
+						speedReduction = (totalEcNight - this.batteries.MaxUsedEC) / totalEcNight;
+				}
+				else if (this.requiredPower > this.electricPower)
+				{   // If required power is greater than total power generated, then average speed can be lowered up to 75%
+					speedReduction = (this.requiredPower - this.electricPower) / this.requiredPower;
+					speedReduction = (speedReduction > 0.75) ? 1 : speedReduction;
+				}
+				return speedReduction;
+			}
+		}
 
 		#endregion
 
@@ -107,18 +117,19 @@ namespace BonVoyage
         internal override List<DisplayedSystemCheckWidget[]> GetDisplayedSystemCheckResults()
         {
             base.GetDisplayedSystemCheckResults();
+			double speedReduction = SpeedReduction;
 
 			DisplayedSystemCheckWidget[] result = new DisplayedSystemCheckWidget[] {
                 new DisplayedSystemCheckWidget {
                     Label = Localizer.Format("#LOC_BV_Control_AverageSpeed"),
-                    Text = this.moveController.averageSpeed.ToString("F") + " m/s",
+                    Text = this.moveController.averageSpeedAsText,
                     Tooltip =
                         this.moveController.averageSpeed > 0
                         ?
                         Localizer.Format("#LOC_BV_Control_SpeedBase") + ": " + this.moveController.maxSpeedBase.ToString("F") + " m/s\n"
                             + Localizer.Format("#LOC_BV_Control_WheelsModifier") + ": " + ((WheelController)this.moveController).wheelsPercentualModifier.ToString("F") + "%\n"
                             + (manned ? Localizer.Format("#LOC_BV_Control_DriverBonus") + ": " + crewSpeedBonus.ToString() + "%\n" : Localizer.Format("#LOC_BV_Control_UnmannedPenalty") + ": " + GetUnmannedSpeedPenalty().ToString() + "%\n")
-                            + (SpeedReduction > 0 ? Localizer.Format("#LOC_BV_Control_PowerPenalty") + ": " + (SpeedReduction > 75 ? "100" : SpeedReduction.ToString("F")) + "%\n" : "")
+                            + (speedReduction > 0 ? Localizer.Format("#LOC_BV_Control_PowerPenalty") + ": " + (100*speedReduction).ToString("F") + "%\n" : "")
                             + Localizer.Format("#LOC_BV_Control_SpeedAtNight") + ": " + averageSpeedAtNight.ToString("F") + " m/s"
                         :
                         Localizer.Format("#LOC_BV_Control_WheelsNotOnline")
@@ -132,19 +143,19 @@ namespace BonVoyage
 					Text = this.electricPower.ToString("F"),
                     Tooltip = Localizer.Format("#LOC_BV_Control_SolarPower") + ": " + electricPower_Solar.ToString("F") + "\n" + Localizer.Format("#LOC_BV_Control_GeneratorPower") + ": " + electricPower_Other.ToString("F") + "\n"
 						+ Localizer.Format("#LOC_BV_Control_UseBatteries_Usage") + ": " + (this.batteries.Use ? (this.batteries.MaxUsedEC.ToString("F0") + " / " + this.batteries.MaxAvailableEC.ToString("F0") + " EC") : Localizer.Format("#LOC_BV_Control_No"))
-						+ Localizer.Format("#LOC_BV_Control_UseSolarPanels_Usage") + ": " + (solarPower.Use ? Localizer.Format("#LOC_BV_Control_Yes") : Localizer.Format("#LOC_BV_Control_No"))
+						+ Localizer.Format("#LOC_BV_Control_UseSolarPanels_Usage") + ": " + (this.solarPower.Use ? Localizer.Format("#LOC_BV_Control_Yes") : Localizer.Format("#LOC_BV_Control_No"))
+						+ (this.batteries.AllowNoGeneratedPower ? Localizer.Format("LOC_BV_Control_UseBatteriesOnly_Usage") : "")
                 }
             };
 			this.displayedSystemCheckWidgets.Add(result);
 
-            double speedReduction = SpeedReduction;
 			result = new DisplayedSystemCheckWidget[] {
                 new DisplayedSystemCheckWidget {
                     Label = Localizer.Format("#LOC_BV_Control_RequiredPower"),
                     Text = requiredPower.ToString("F")
-                        + (speedReduction == 0 ? "" :
-                            (((speedReduction > 0) && (speedReduction <= 75))
-                                ? " (" + Localizer.Format("#LOC_BV_Control_PowerReduced") + " " + speedReduction.ToString("F") + "%)"
+                        + (speedReduction == 0 || this.batteries.AllowNoGeneratedPower ? "" :
+                            (1 != speedReduction
+                                ? " (" + Localizer.Format("#LOC_BV_Control_PowerReduced") + " " + (speedReduction).ToString("P")
                                 : " (" + Localizer.Format("#LOC_BV_Control_NotEnoughPower") + ")")),
                     Tooltip = ""
                 }
@@ -153,12 +164,32 @@ namespace BonVoyage
 
 			result = new DisplayedSystemCheckWidget[] {
 				new DisplayedSystemCheckToggleResult {
+					Text = Localizer.Format("#LOC_BV_Control_UseSolarPanels"),
+					Tooltip = Localizer.Format("#LOC_BV_Control_UseSolarPanels_Tooltip"),
+					GetValue = GetUseSolarPanels,
+					SelectedCallback = UseSolarPanelsChanged
+				}
+			};
+			this.displayedSystemCheckWidgets.Add(result);
+
+			result = new DisplayedSystemCheckWidget[] {
+				new DisplayedSystemCheckToggleResult {
                     Text = Localizer.Format("#LOC_BV_Control_UseBatteries"),
-                    Tooltip = Localizer.Format("#LOC_BV_Control_UseBatteries_Tooltip", (this.batteries.UseableECPercent*100).ToString("P")),
+                    Tooltip = Localizer.Format("#LOC_BV_Control_UseBatteries_Tooltip", (this.batteries.UseableECPercent).ToString("P")),
 					GetValue = GetUseBatteries,
 					SelectedCallback = UseBatteriesChanged
                 }
             };
+			this.displayedSystemCheckWidgets.Add(result);
+
+			result = new DisplayedSystemCheckWidget[] {
+				new DisplayedSystemCheckToggleResult {
+					Text = Localizer.Format("#LOC_BV_Control_UseBatteriesOnly"),
+					Tooltip = Localizer.Format("#LOC_BV_Control_UseBatteriesOnly_Tooltip"),
+					GetValue = GetUseBatteriesOnly,
+					SelectedCallback = UseBatteriesOnlyChanged
+				}
+			};
 			this.displayedSystemCheckWidgets.Add(result);
 
 			result = new DisplayedSystemCheckWidget[] {
@@ -254,6 +285,38 @@ namespace BonVoyage
                     crewSpeedBonus = 2 * maxScoutLevel; // up to 10% for a Scout (Scouts disregard safety)
             }
 
+            // If we are using batteries, compute for how long and how much EC we can use
+			if (this.batteries.Use)
+            {
+                batteries.MaxUsedEC = 0;
+                batteries.ECPerSecondConsumed = 0;
+                batteries.ECPerSecondGenerated = 0;
+
+                // We have enough of solar power to recharge batteries
+				if (this.batteries.AllowNoGeneratedPower || this.requiredPower < this.electricPower)
+                {
+                    batteries.ECPerSecondConsumed = Math.Max(requiredPower - electricPower_Other, 0); // If there is more other power than required power, we don't need batteries
+					this.batteries.MaxUsedEC = this.batteries.MaxAvailableEC * this.batteries.UseableECPercent; 
+                    if (batteries.ECPerSecondConsumed > 0)
+                    {
+                        double halfday = vessel.mainBody.rotationPeriod / 2; // in seconds
+						this.batteries.ECPerSecondGenerated = this.electricPower - this.requiredPower;
+                        batteries.MaxUsedEC = Math.Min(batteries.MaxUsedEC, batteries.ECPerSecondConsumed * halfday); // get lesser value of MaxUsedEC and EC consumed per night
+						if (!this.batteries.AllowNoGeneratedPower)
+							batteries.MaxUsedEC = Math.Min(batteries.MaxUsedEC, batteries.ECPerSecondGenerated * halfday); // get lesser value of MaxUsedEC and max EC available for recharge during a day
+                    }
+                }
+
+                if (batteries.MaxUsedEC > 0)
+                    batteries.CurrentEC = batteries.MaxUsedEC; // We are starting at full available capacity
+                else
+                {
+                    UseBatteriesChanged(false);
+                    ScreenMessages.PostScreenMessage(Localizer.Format("#LOC_BV_Warning_CantUseBatteries") + " " + Localizer.Format("#LOC_BV_Warning_LowPowerRover") + ".", 5f).color = Color.yellow;
+                }
+            }
+
+			double speedReduction = this.SpeedReduction;
 			{
 				double throttleCap = 100;
 
@@ -266,11 +329,7 @@ namespace BonVoyage
 				// If required power is greater then total power generated, then average speed can be lowered up to 75%
 				if (this.requiredPower > this.electricPower)
 				{
-					double speedReduction = (this.requiredPower - this.electricPower) / this.requiredPower;
-					if (speedReduction <= 0.75)
-						throttleCap *= (1 - speedReduction);
-					else
-						throttleCap = 0;
+					throttleCap *= (1 - speedReduction);
 				}
 
 				// Average speed will vary depending on number of wheels online and crew present from 50 to 95 percent of average wheels' max speed
@@ -278,52 +337,15 @@ namespace BonVoyage
 				this.fuelCells.Check(throttleCap);
 			}
 
-            // Base average speed at night is the same as average speed, if there is other power source. Zero otherwise.
-            if (electricPower_Other > 0.0)
-                averageSpeedAtNight = this.moveController.averageSpeed;
-            else
-                averageSpeedAtNight = 0;
+			// Base average speed at night is the same as average speed, if there is other power source. Zero otherwise.
+			this.averageSpeedAtNight = (this.batteries.AllowNoGeneratedPower || this.electricPower_Other > 0.0)
+					? this.moveController.averageSpeed
+					: 0
+				;
 
-            // If required power is greater then other power generated, then average speed at night can be lowered up to 75%
-            if (requiredPower > electricPower_Other)
-            {
-                double speedReduction = (requiredPower - electricPower_Other) / requiredPower;
-                if (speedReduction <= 0.75)
-                    averageSpeedAtNight = averageSpeedAtNight * (1 - speedReduction);
-                else
-                    averageSpeedAtNight = 0;
-            }
-
-            // If we are using batteries, compute for how long and how much EC we can use
-			if (this.batteries.Use)
-            {
-                batteries.MaxUsedEC = 0;
-                batteries.ECPerSecondConsumed = 0;
-                batteries.ECPerSecondGenerated = 0;
-
-                // We have enough of solar power to recharge batteries
-				if (this.requiredPower < this.electricPower)
-                {
-                    batteries.ECPerSecondConsumed = Math.Max(requiredPower - electricPower_Other, 0); // If there is more other power than required power, we don't need batteries
-					this.batteries.MaxUsedEC = this.batteries.MaxAvailableEC * this.batteries.UseableECPercent; 
-                    if (batteries.ECPerSecondConsumed > 0)
-                    {
-                        double halfday = vessel.mainBody.rotationPeriod / 2; // in seconds
-						this.batteries.ECPerSecondGenerated = this.electricPower - this.requiredPower;
-                        batteries.MaxUsedEC = Math.Min(batteries.MaxUsedEC, batteries.ECPerSecondConsumed * halfday); // get lesser value of MaxUsedEC and EC consumed per night
-                        batteries.MaxUsedEC = Math.Min(batteries.MaxUsedEC, batteries.ECPerSecondGenerated * halfday); // get lesser value of MaxUsedEC and max EC available for recharge during a day
-                    }
-                }
-
-                if (batteries.MaxUsedEC > 0)
-                    batteries.CurrentEC = batteries.MaxUsedEC; // We are starting at full available capacity
-                else
-                {
-                    UseBatteriesChanged(false);
-                    ScreenMessages.PostScreenMessage(Localizer.Format("#LOC_BV_Warning_CantUseBatteries") + " " + Localizer.Format("#LOC_BV_Warning_LowPowerRover") + ".", 5f).color = Color.yellow;
-                }
-            }
-        }
+			// If required power is greater then other power generated, then average speed at night can be lowered up to 75%
+			this.averageSpeedAtNight *= (1 - speedReduction);
+		}
 
 
         #region Power
@@ -402,18 +424,12 @@ namespace BonVoyage
                 }
             }
 
-            // Power production
-			if (this.requiredPower > this.electricPower)
-            {
-                // If required power is greater than total power generated, then average speed can be lowered up to 75%
-				double speedReduction = (this.requiredPower - this.electricPower) / this.requiredPower;
-
-                if (speedReduction > 0.75)
-                {
-                    ScreenMessages.PostScreenMessage(Localizer.Format("#LOC_BV_Warning_LowPowerRover"), 5f).color = Color.yellow;
-                    return false;
-                }
-            }
+			// A SpeedReducion of 100% means we are kaput. No movement possible due no power available.
+			if (1 == this.SpeedReduction)
+			{
+				ScreenMessages.PostScreenMessage(Localizer.Format("#LOC_BV_Warning_LowPowerRover"), 5f).color = Color.yellow;
+				return false;
+			}
 
             BonVoyageModule module = vessel.FindPartModuleImplementing<BonVoyageModule>();
             if (module != null)
@@ -666,6 +682,25 @@ namespace BonVoyage
         }
 
 
+		/// <summary>
+		/// Return status of solar panels usage
+		/// </summary>
+		/// <returns></returns>
+		internal bool GetUseSolarPanels() => this.solarPower.Use;
+
+
+		/// <summary>
+		/// Set solar panels usage
+		/// </summary>
+		/// <param name="value"></param>
+		internal void UseSolarPanelsChanged(bool value)
+		{
+			this.solarPower.Use = value;
+			if (value)
+				this.batteries.Use = true;
+		}
+
+
         /// <summary>
         /// Return status of batteries usage
         /// </summary>
@@ -684,15 +719,41 @@ namespace BonVoyage
         {
 			this.batteries.Use = value;
             if (!value)
+            {
+				this.batteries.AllowNoGeneratedPower = false;
                 fuelCells.Use = false;
+            }
         }
 
 
-        /// <summary>
-        /// Return status of fuel cells usage
-        /// </summary>
-        /// <returns></returns>
-        internal bool GetUseFuelCells()
+		/// <summary>
+		/// Return status of batteries only usage
+		/// </summary>
+		/// <returns></returns>
+		internal bool GetUseBatteriesOnly() => this.batteries.AllowNoGeneratedPower;
+
+
+		/// <summary>
+		/// Set batteries only usage
+		/// </summary>
+		/// <param name="value"></param>
+		internal void UseBatteriesOnlyChanged(bool value)
+		{
+			this.batteries.AllowNoGeneratedPower = value;
+			if (value)
+			{
+				this.batteries.Use = true;
+				this.fuelCells.Use = false;
+				this.solarPower.Use = false;
+			}
+		}
+
+
+		/// <summary>
+		/// Return status of fuel cells usage
+		/// </summary>
+		/// <returns></returns>
+		internal bool GetUseFuelCells()
         {
             return fuelCells.Use;
         }

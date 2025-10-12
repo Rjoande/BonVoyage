@@ -23,6 +23,7 @@ namespace BonVoyage.MovementControllers
 	internal abstract class Controller
 	{
 		public double averageSpeed = 0;
+		public string averageSpeedAsText => (Double.IsNaN(this.averageSpeed) || Double.IsInfinity(averageSpeed) ? "---" : this.averageSpeed.ToString("F") + " m/s");
 		public double vesselHeightFromTerrain = 0;
 		public double maxSpeedBase;					// maximum speed without modifiers
 
