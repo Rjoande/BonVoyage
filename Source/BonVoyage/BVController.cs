@@ -39,19 +39,24 @@ namespace BonVoyage
     }
 
 
-    /// <summary>
-    /// Result for display in the Control Window
-    /// </summary>
-    internal struct DisplayedSystemCheckResult
-    {
-        internal string Label;
-        internal string Text;
-        internal string Tooltip;
-        internal bool Toggle; // true - DialogGUIToggle ; false - DialogGUILabel
-        internal Func<bool> GetToggleValue;
-        internal Callback<bool> ToggleSelectedCallback;
-    }
+	internal class DisplayedSystemCheckWidget
+	{
+		internal string Label;
+		internal string Text;
+		internal string Tooltip;
+	}
 
+	internal class DisplayedSystemCheckToggleResult : DisplayedSystemCheckWidget
+	{
+		internal Func<bool> GetValue;
+		internal Callback<bool> SelectedCallback;
+	}
+
+	internal class DisplayedSystemCheckPercentResult : DisplayedSystemCheckWidget
+	{
+		internal Func<float> GetValue;
+		internal Callback<float> SelectedCallback;
+	}
 
     /// <summary>
     /// Basic controller
@@ -113,7 +118,7 @@ namespace BonVoyage
         #region Private and protected properties
 
         protected ConfigNode BVModule; // Config node of BonVoyageModule
-        protected List<DisplayedSystemCheckResult[]> displayedSystemCheckResults;
+		protected readonly List<DisplayedSystemCheckWidget[]> displayedSystemCheckWidgets = new List<DisplayedSystemCheckWidget[]>();
         protected int mainStarIndex; // Vessel's main star's index in the FlightGlobals.Bodies
 
         // Config values
@@ -157,7 +162,7 @@ namespace BonVoyage
         {
             vessel = v;
             BVModule = module;
-            displayedSystemCheckResults = new List<DisplayedSystemCheckResult[]>();
+			this.displayedSystemCheckWidgets.Clear();
 
 			this.fuelCells = fuelCellPowerSource;
 			this.solarPower = solarPowerSource;
@@ -268,46 +273,41 @@ namespace BonVoyage
         #endregion
 
 
-        #region Status window texts
 
-        internal virtual List<DisplayedSystemCheckResult[]> GetDisplayedSystemCheckResults()
-        {
-            if (displayedSystemCheckResults == null) // Just to be sure
-                displayedSystemCheckResults = new List<DisplayedSystemCheckResult[]>();
+		#region Status window texts
 
-            displayedSystemCheckResults.Clear();
+		internal virtual List<DisplayedSystemCheckWidget[]> GetDisplayedSystemCheckResults()
+		{
+			this.displayedSystemCheckWidgets.Clear();
 
-            DisplayedSystemCheckResult[] result = new DisplayedSystemCheckResult[] {
-                new DisplayedSystemCheckResult {
-                    Toggle = false,
+			DisplayedSystemCheckWidget[] result = new DisplayedSystemCheckWidget[] {
+				new DisplayedSystemCheckWidget {
                     Label = Localizer.Format("#LOC_BV_Control_TargetLat"),
                     Text = targetLatitude.ToString("0.####"),
                     Tooltip = ""
                 }
             };
-            displayedSystemCheckResults.Add(result);
+			this.displayedSystemCheckWidgets.Add(result);
 
-            result = new DisplayedSystemCheckResult[] {
-                new DisplayedSystemCheckResult {
-                    Toggle = false,
+			result = new DisplayedSystemCheckWidget[] {
+				new DisplayedSystemCheckWidget {
                     Label = Localizer.Format("#LOC_BV_Control_TargetLon"),
                     Text = targetLongitude.ToString("0.####"),
                     Tooltip = ""
                 }
             };
-            displayedSystemCheckResults.Add(result);
+			this.displayedSystemCheckWidgets.Add(result);
 
-            result = new DisplayedSystemCheckResult[] {
-                new DisplayedSystemCheckResult {
-                    Toggle = false,
-                    Label = Localizer.Format("#LOC_BV_Control_Distance"),
+			result = new DisplayedSystemCheckWidget[] {
+				new DisplayedSystemCheckWidget {
+					Label = Localizer.Format("#LOC_BV_Control_Distance"),
                     Text = Tools.ConvertDistanceToText(RemainingDistanceToTarget),
                     Tooltip = ""
                 }
             };
-            displayedSystemCheckResults.Add(result);
+			this.displayedSystemCheckWidgets.Add(result);
 
-            return displayedSystemCheckResults;
+			return this.displayedSystemCheckWidgets;
         }
 
         #endregion
@@ -368,7 +368,7 @@ namespace BonVoyage
             mainStarIndex = Tools.GetMainStar(vessel).flightGlobalsIndex;
 
             // Get power production
-			this.electricPower_Solar = this.solarPower.GetAvailablePower(FlightGlobals.Bodies[mainStarIndex]);
+			this.electricPower_Solar = this.solarPower.GetAvailablePower();
 			this.electricPower_Other = this.fuelCells.GetAvailablePower();
         }
 

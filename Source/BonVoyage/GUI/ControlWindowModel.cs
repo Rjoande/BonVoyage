@@ -347,22 +347,23 @@ namespace BonVoyage
         /// </summary>
         /// <param name="result"></param>
         /// <returns>DialogGUIHorizontalLayout row</returns>
-        private DialogGUIHorizontalLayout CreateListLayoutRow(DisplayedSystemCheckResult[] result)
+		private DialogGUIHorizontalLayout CreateListLayoutRow(DisplayedSystemCheckWidget[] result)
         {
             DialogGUIHorizontalLayout row = new DialogGUIHorizontalLayout();
 
-			for (int i = 0; i < result.Length; ++i)
+            for (int i = 0; i < result.Length; ++i)
             {
-                if (result[i].Toggle)
-                {
-                    row.AddChild(
-                        (result[i].Tooltip.Length > 0)
-                        ?
-                        TooltipExtension.DeferTooltip(new DialogGUIToggle(result[i].GetToggleValue, result[i].Text, result[i].ToggleSelectedCallback) { tooltipText = result[i].Tooltip })
-                        :
-                        new DialogGUIToggle(result[i].GetToggleValue, result[i].Text, result[i].ToggleSelectedCallback)
-                    );
-                }
+				if (result[i] is DisplayedSystemCheckToggleResult)
+				{
+					DisplayedSystemCheckToggleResult r = result[i] as DisplayedSystemCheckToggleResult;
+					row.AddChild(
+						(result[i].Tooltip.Length > 0)
+						?
+						TooltipExtension.DeferTooltip(new DialogGUIToggle(r.GetValue, result[i].Text, r.SelectedCallback) { tooltipText = r.Tooltip })
+						:
+						new DialogGUIToggle(r.GetValue, r.Text, r.SelectedCallback)
+					);
+				}
                 else
                 {
                     row.AddChild(new DialogGUILabel(result[i].Label + ":", 100f));
@@ -391,7 +392,7 @@ namespace BonVoyage
         {
             if (currentController != null)
             {
-                List<DisplayedSystemCheckResult[]> resultsList = currentController.GetDisplayedSystemCheckResults();
+                List<DisplayedSystemCheckWidget[]> resultsList = currentController.GetDisplayedSystemCheckResults();
 
                 DialogGUIBase[] list = new DialogGUIBase[1 + resultsList.Count];
                 int index = 0;
@@ -441,7 +442,7 @@ namespace BonVoyage
             // Add rows
             if (currentController != null)
             {
-                List<DisplayedSystemCheckResult[]> resultsList = currentController.GetDisplayedSystemCheckResults();
+				List<DisplayedSystemCheckWidget[]> resultsList = this.currentController.GetDisplayedSystemCheckResults();
 
 				for (int i = 0; i < resultsList.Count; ++i)
                 {

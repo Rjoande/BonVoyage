@@ -112,14 +112,13 @@ namespace BonVoyage
 
         #region Status window texts
 
-        internal override List<DisplayedSystemCheckResult[]> GetDisplayedSystemCheckResults()
+		internal override List<DisplayedSystemCheckWidget[]> GetDisplayedSystemCheckResults()
         {
             base.GetDisplayedSystemCheckResults();
 
-            DisplayedSystemCheckResult[] result = new DisplayedSystemCheckResult[] {
-                new DisplayedSystemCheckResult
+			DisplayedSystemCheckWidget[] result = new DisplayedSystemCheckWidget[] {
+                new DisplayedSystemCheckWidget
                 {
-                    Toggle = false,
                     Label = Localizer.Format("#LOC_BV_Control_AverageSpeed"),
                     Text = this.moveController.averageSpeed.ToString("F") + " m/s",
                     Tooltip = Localizer.Format("#LOC_BV_Control_SpeedBase") + ": " + this.moveController.maxSpeedBase.ToString("F") + " m/s\n"
@@ -128,14 +127,13 @@ namespace BonVoyage
                         + Localizer.Format("#LOC_BV_Control_UsedThrust") + ": " + ((EngineController)this.moveController).MaxThrust.ToString("F") + " kN"
                 }
             };
-            displayedSystemCheckResults.Add(result);
+			this.displayedSystemCheckWidgets.Add(result);
 
             if (requiredPower > 0)
             {
                 double speedReduction = SpeedReduction;
-                result = new DisplayedSystemCheckResult[] {
-                    new DisplayedSystemCheckResult {
-                        Toggle = false,
+				result = new DisplayedSystemCheckWidget[] {
+					new DisplayedSystemCheckWidget {
                         Label = Localizer.Format("#LOC_BV_Control_ElectricPower"),
 						Text = this.requiredPower.ToString("F") + " / " + this.electricPower.ToString("F"),
                         Tooltip = Localizer.Format("#LOC_BV_Control_RequiredPower") + ": " + requiredPower.ToString("F")
@@ -146,57 +144,52 @@ namespace BonVoyage
                             + Localizer.Format("#LOC_BV_Control_SolarPower") + ": " + electricPower_Solar.ToString("F") + "\n" + Localizer.Format("#LOC_BV_Control_GeneratorPower") + ": " + electricPower_Other.ToString("F")
                     }
                 };
-                displayedSystemCheckResults.Add(result);
+				this.displayedSystemCheckWidgets.Add(result);
             }
 
-            result = new DisplayedSystemCheckResult[] {
-                new DisplayedSystemCheckResult
+			result = new DisplayedSystemCheckWidget[] {
+				new DisplayedSystemCheckWidget
                 {
-                    Toggle = false,
                     Label = Localizer.Format("#LOC_BV_Control_Throttle"),
                     Text = "",
                     Tooltip = Localizer.Format("#LOC_BV_Control_Throttle_Tooltip")
                 }
             };
-            displayedSystemCheckResults.Add(result);
+			this.displayedSystemCheckWidgets.Add(result);
 
-            result = new DisplayedSystemCheckResult[] {
-                new DisplayedSystemCheckResult {
-                    Toggle = true,
+			result = new DisplayedSystemCheckWidget[] {
+				new DisplayedSystemCheckToggleResult {
                     Text = "100%",
                     Tooltip = "",
-                    GetToggleValue = GetThrottle100,
-                    ToggleSelectedCallback = UseThrottle100
+					GetValue = GetThrottle100,
+					SelectedCallback = UseThrottle100
                 },
-                new DisplayedSystemCheckResult {
-                    Toggle = true,
+				new DisplayedSystemCheckToggleResult {
                     Text = "75%",
                     Tooltip = "",
-                    GetToggleValue = GetThrottle75,
-                    ToggleSelectedCallback = UseThrottle75
+					GetValue = GetThrottle75,
+					SelectedCallback = UseThrottle75
                 },
-                new DisplayedSystemCheckResult {
-                    Toggle = true,
+				new DisplayedSystemCheckToggleResult {
                     Text = "50%",
                     Tooltip = "",
-                    GetToggleValue = GetThrottle50,
-                    ToggleSelectedCallback = UseThrottle50
+					GetValue = GetThrottle50,
+					SelectedCallback = UseThrottle50
                 }
             };
-            displayedSystemCheckResults.Add(result);
+			this.displayedSystemCheckWidgets.Add(result);
 
-            result = new DisplayedSystemCheckResult[] {
-                new DisplayedSystemCheckResult {
-                    Toggle = true,
+			result = new DisplayedSystemCheckWidget[] {
+				new DisplayedSystemCheckToggleResult {
                     Text = "25%",
                     Tooltip = "",
-                    GetToggleValue = GetThrottle25,
-                    ToggleSelectedCallback = UseThrottle25
+					GetValue = GetThrottle25,
+					SelectedCallback = UseThrottle25
                 }
             };
-            displayedSystemCheckResults.Add(result);
+			this.displayedSystemCheckWidgets.Add(result);
 
-            return displayedSystemCheckResults;
+			return this.displayedSystemCheckWidgets;
         }
 
         #endregion

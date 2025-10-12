@@ -104,13 +104,12 @@ namespace BonVoyage
 
         #region Status window texts
 
-        internal override List<DisplayedSystemCheckResult[]> GetDisplayedSystemCheckResults()
+        internal override List<DisplayedSystemCheckWidget[]> GetDisplayedSystemCheckResults()
         {
             base.GetDisplayedSystemCheckResults();
 
-            DisplayedSystemCheckResult[] result = new DisplayedSystemCheckResult[] {
-                new DisplayedSystemCheckResult {
-                    Toggle = false,
+			DisplayedSystemCheckWidget[] result = new DisplayedSystemCheckWidget[] {
+                new DisplayedSystemCheckWidget {
                     Label = Localizer.Format("#LOC_BV_Control_AverageSpeed"),
                     Text = this.moveController.averageSpeed.ToString("F") + " m/s",
                     Tooltip =
@@ -125,23 +124,22 @@ namespace BonVoyage
                         Localizer.Format("#LOC_BV_Control_WheelsNotOnline")
                 }
             };
-            displayedSystemCheckResults.Add(result);
+			this.displayedSystemCheckWidgets.Add(result);
 
-            result = new DisplayedSystemCheckResult[] {
-                new DisplayedSystemCheckResult {
-                    Toggle = false,
+			result = new DisplayedSystemCheckWidget[] {
+                new DisplayedSystemCheckWidget {
                     Label = Localizer.Format("#LOC_BV_Control_GeneratedPower"),
 					Text = this.electricPower.ToString("F"),
                     Tooltip = Localizer.Format("#LOC_BV_Control_SolarPower") + ": " + electricPower_Solar.ToString("F") + "\n" + Localizer.Format("#LOC_BV_Control_GeneratorPower") + ": " + electricPower_Other.ToString("F") + "\n"
                         + Localizer.Format("#LOC_BV_Control_UseBatteries_Usage") + ": " + (batteries.UseBatteries ? (batteries.MaxUsedEC.ToString("F0") + " / " + batteries.MaxAvailableEC.ToString("F0") + " EC") : Localizer.Format("#LOC_BV_Control_No"))
+						+ Localizer.Format("#LOC_BV_Control_UseSolarPanels_Usage") + ": " + (solarPower.Use ? Localizer.Format("#LOC_BV_Control_Yes") : Localizer.Format("#LOC_BV_Control_No"))
                 }
             };
-            displayedSystemCheckResults.Add(result);
+			this.displayedSystemCheckWidgets.Add(result);
 
             double speedReduction = SpeedReduction;
-            result = new DisplayedSystemCheckResult[] {
-                new DisplayedSystemCheckResult {
-                    Toggle = false,
+			result = new DisplayedSystemCheckWidget[] {
+                new DisplayedSystemCheckWidget {
                     Label = Localizer.Format("#LOC_BV_Control_RequiredPower"),
                     Text = requiredPower.ToString("F")
                         + (speedReduction == 0 ? "" :
@@ -151,31 +149,29 @@ namespace BonVoyage
                     Tooltip = ""
                 }
             };
-            displayedSystemCheckResults.Add(result);
+			this.displayedSystemCheckWidgets.Add(result);
 
-            result = new DisplayedSystemCheckResult[] {
-                new DisplayedSystemCheckResult {
-                    Toggle = true,
+			result = new DisplayedSystemCheckWidget[] {
+				new DisplayedSystemCheckToggleResult {
                     Text = Localizer.Format("#LOC_BV_Control_UseBatteries"),
                     Tooltip = Localizer.Format("#LOC_BV_Control_UseBatteries_Tooltip", (this.batteries.UseableECPercent*100).ToString("P")),
-                    GetToggleValue = GetUseBatteries,
-                    ToggleSelectedCallback = UseBatteriesChanged
+					GetValue = GetUseBatteries,
+					SelectedCallback = UseBatteriesChanged
                 }
             };
-            displayedSystemCheckResults.Add(result);
+			this.displayedSystemCheckWidgets.Add(result);
 
-            result = new DisplayedSystemCheckResult[] {
-                new DisplayedSystemCheckResult {
-                    Toggle = true,
+			result = new DisplayedSystemCheckWidget[] {
+				new DisplayedSystemCheckToggleResult {
                     Text = Localizer.Format("#LOC_BV_Control_UseFuelCells"),
                     Tooltip = Localizer.Format("#LOC_BV_Control_UseFuelCellsTooltip"),
-                    GetToggleValue = GetUseFuelCells,
-                    ToggleSelectedCallback = UseFuelCellsChanged
+					GetValue = GetUseFuelCells,
+					SelectedCallback = UseFuelCellsChanged
                 }
             };
-            displayedSystemCheckResults.Add(result);
+			this.displayedSystemCheckWidgets.Add(result);
 
-            return displayedSystemCheckResults;
+			return this.displayedSystemCheckWidgets;
         }
 
         #endregion

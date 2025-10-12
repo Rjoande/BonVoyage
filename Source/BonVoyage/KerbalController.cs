@@ -72,21 +72,20 @@ namespace BonVoyage
 
         #region Status window texts
 
-        internal override List<DisplayedSystemCheckResult[]> GetDisplayedSystemCheckResults()
+        internal override List<DisplayedSystemCheckWidget[]> GetDisplayedSystemCheckResults()
         {
             base.GetDisplayedSystemCheckResults();
 
-            DisplayedSystemCheckResult[] result = new DisplayedSystemCheckResult[] {
-                new DisplayedSystemCheckResult {
-                    Toggle = false,
+			DisplayedSystemCheckWidget[] result = new DisplayedSystemCheckWidget[] {
+				new DisplayedSystemCheckWidget {
                     Label = Localizer.Format("#LOC_BV_Control_AverageSpeed"),
                     Text = this.moveController.averageSpeed.ToString("F") + " m/s",
                     Tooltip = ""
                 }
             };
-            displayedSystemCheckResults.Add(result);
+			this.displayedSystemCheckWidgets.Add(result);
 
-            return displayedSystemCheckResults;
+			return this.displayedSystemCheckWidgets;
         }
 
         #endregion
