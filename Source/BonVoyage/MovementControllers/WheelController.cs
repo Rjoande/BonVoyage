@@ -168,7 +168,7 @@ namespace BonVoyage.MovementControllers
 					{
 						powerRequired += wheelMotor.avgResRate;
 						++online;
-						maxSpeedSum += wheelMotor.GetMaxSpeed();
+						maxSpeedSum += wheelMotor.GetMaxSpeed() * (wheelMotor.driveLimiter / 100);
 					}
 				}
 			}
