@@ -37,12 +37,9 @@ namespace BonVoyage.PowerSources
 			ConfigNode subNode = controllerNode.GetNode("BATTERIES");
 			if (null == subNode) return;
 
-			this.setDefaults();
-
 			this.UseBatteries = Convert.ToBoolean(subNode.GetValue("useBatteries"));
 			this.MaxUsedEC = Convert.ToDouble(subNode.GetValue("maxUsedEC"));
-			if (subNode.HasValue("useableECPercent"))
-				this.UseableECPercent = Convert.ToDouble(subNode.GetValue("useableECPercent"));
+			this.UseableECPercent = Convert.ToDouble(subNode.GetValue("useableECPercent") ?? "0.5"); // By default, we are using only half of max available EC
 			this.ECPerSecondConsumed = Convert.ToDouble(subNode.GetValue("ecPerSecondConsumed"));
 			this.ECPerSecondGenerated = Convert.ToDouble(subNode.GetValue("ecPerSecondGenerated"));
 			this.CurrentEC = Convert.ToDouble(subNode.GetValue("currentEC"));
@@ -61,11 +58,5 @@ namespace BonVoyage.PowerSources
 
 			controllerNode.AddNode(subNode);
 		}
-
-		private void setDefaults()
-		{
-			this.UseableECPercent = 0.5; // By default, we are using only half of max available EC
-		}
 	}
-
 }
