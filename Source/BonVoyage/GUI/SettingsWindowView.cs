@@ -99,7 +99,7 @@ namespace BonVoyage
             {
                 return new Rect(
                     (mainWindowPosition.x / GameSettings.UI_SCALE + CommonWindowProperties.mainWindowWidth / 2 + CommonWindowProperties.settingsWindowWidth / 2) / Screen.width + 0.5f,
-                    (mainWindowPosition.y / GameSettings.UI_SCALE + CommonWindowProperties.mainWindowHeight / 2 - CommonWindowProperties.settingsWindowHeight / 2 - 28) / Screen.height + 0.5f, 
+                    (mainWindowPosition.y / GameSettings.UI_SCALE + CommonWindowProperties.mainWindowHeight / 2 - CommonWindowProperties.settingsWindowHeight / 2 - 28) / Screen.height + 0.5f, // Don't ask about the "28" number - I just found it does what I want, i.e., put the Settings top border in the line line the Main Window's one. Why it must be 28 I don't know at this time.
                     CommonWindowProperties.settingsWindowWidth, CommonWindowProperties.settingsWindowHeight);
             }
         }
