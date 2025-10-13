@@ -66,7 +66,8 @@ namespace BonVoyage
             {
                 double speedReduction = 0;
 				if (this.requiredPower > this.electricPower)
-					speedReduction = Math.Sqrt((this.requiredPower - this.electricPower) / this.requiredPower) * 100;
+					speedReduction = Math.Sqrt((this.requiredPower - this.electricPower) / this.requiredPower);
+				speedReduction = (speedReduction > 0.87) ? 1 : speedReduction;
                 return speedReduction;
             }
         }
@@ -120,7 +121,7 @@ namespace BonVoyage
                 new DisplayedSystemCheckWidget
                 {
                     Label = Localizer.Format("#LOC_BV_Control_AverageSpeed"),
-                    Text = this.moveController.averageSpeed.ToString("F") + " m/s",
+                    Text = this.moveController.averageSpeedAsText,
                     Tooltip = Localizer.Format("#LOC_BV_Control_SpeedBase") + ": " + this.moveController.maxSpeedBase.ToString("F") + " m/s\n"
                         + (manned ? Localizer.Format("#LOC_BV_Control_DriverBonus") + ": " + crewSpeedBonus.ToString() + "%\n" : Localizer.Format("#LOC_BV_Control_UnmannedPenalty") + ": " + GetUnmannedSpeedPenalty().ToString() + "%\n")
                         + Localizer.Format("#LOC_BV_Control_SpeedAtNight") + ": " + averageSpeedAtNight.ToString("F") + " m/s\n"
@@ -138,8 +139,8 @@ namespace BonVoyage
 						Text = this.requiredPower.ToString("F") + " / " + this.electricPower.ToString("F"),
                         Tooltip = Localizer.Format("#LOC_BV_Control_RequiredPower") + ": " + requiredPower.ToString("F")
                             + (speedReduction == 0 ? "" :
-                                (((speedReduction > 0) && (speedReduction <= 87))
-                                    ? " (" + Localizer.Format("#LOC_BV_Control_PowerReduced") + " " + speedReduction.ToString("F") + "%)"
+                                (1 != speedReduction
+                                    ? " (" + Localizer.Format("#LOC_BV_Control_PowerReduced") + " " + speedReduction.ToString("P")
                                     : " (" + Localizer.Format("#LOC_BV_Control_NotEnoughPower") + ")")) + "\n"
                             + Localizer.Format("#LOC_BV_Control_SolarPower") + ": " + electricPower_Solar.ToString("F") + "\n" + Localizer.Format("#LOC_BV_Control_GeneratorPower") + ": " + electricPower_Other.ToString("F")
                     }
