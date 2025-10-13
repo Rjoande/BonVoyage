@@ -697,7 +697,10 @@ namespace BonVoyage
 		{
 			this.solarPower.Use = value;
 			if (value)
+			{
 				this.batteries.Use = true;
+				this.batteries.AllowNoGeneratedPower = false;
+			}
 		}
 
 
@@ -767,7 +770,10 @@ namespace BonVoyage
         {
             fuelCells.Use = value;
             if (value)
+			{
 				this.batteries.Use = true;
+				this.batteries.AllowNoGeneratedPower = false;
+			}
         }
 
 		private void engageBrakesOrNot(bool v)
