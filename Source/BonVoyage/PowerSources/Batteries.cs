@@ -27,7 +27,7 @@ namespace BonVoyage.PowerSources
 		internal bool Use; // Use batteries during a night
 		internal bool AllowNoGeneratedPower; // Allows rovering when there's no active source of EC.
         internal double MaxAvailableEC; // Max EC available from all activated batteries
-		internal double UseableECPercent = 0.5; // By default, we are using only half of max available EC;
+		internal double UseableECRatio = 0.5; // By default, we are using only half of max available EC;
         internal double MaxUsedEC; // Max EC we can use
         internal double ECPerSecondConsumed; // EC per second consumed by wheels
         internal double ECPerSecondGenerated; // EC per second generated (generated power minus required power)
@@ -41,7 +41,7 @@ namespace BonVoyage.PowerSources
 			this.Use = Convert.ToBoolean(subNode.GetValue("useBatteries"));
 			this.AllowNoGeneratedPower = Convert.ToBoolean(subNode.GetValue("allowNoGeneratedPower" ?? "False"));
 			this.MaxUsedEC = Convert.ToDouble(subNode.GetValue("maxUsedEC"));
-			this.UseableECPercent = Convert.ToDouble(subNode.GetValue("useableECPercent") ?? "0.5"); // By default, we are using only half of max available EC
+			this.UseableECRatio = Convert.ToDouble(subNode.GetValue("useableECRatio") ?? "0.5"); // By default, we are using only half of max available EC
 			this.ECPerSecondConsumed = Convert.ToDouble(subNode.GetValue("ecPerSecondConsumed"));
 			this.ECPerSecondGenerated = Convert.ToDouble(subNode.GetValue("ecPerSecondGenerated"));
 			this.CurrentEC = Convert.ToDouble(subNode.GetValue("currentEC"));
@@ -54,7 +54,7 @@ namespace BonVoyage.PowerSources
 			subNode.AddValue("useBatteries", this.Use);
 			subNode.AddValue("allowNoGeneratedPower", this.AllowNoGeneratedPower);
 			subNode.AddValue("maxUsedEC", this.MaxUsedEC);
-			subNode.AddValue("useableECPercent", this.UseableECPercent);
+			subNode.AddValue("useableECRatio", this.UseableECRatio);
 			subNode.AddValue("ecPerSecondConsumed", this.ECPerSecondConsumed);
 			subNode.AddValue("ecPerSecondGenerated", this.ECPerSecondGenerated);
 			subNode.AddValue("currentEC", this.CurrentEC);

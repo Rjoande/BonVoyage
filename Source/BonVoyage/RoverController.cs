@@ -175,7 +175,7 @@ namespace BonVoyage
 			result = new DisplayedSystemCheckWidget[] {
 				new DisplayedSystemCheckToggleResult {
                     Text = Localizer.Format("#LOC_BV_Control_UseBatteries"),
-                    Tooltip = Localizer.Format("#LOC_BV_Control_UseBatteries_Tooltip", (this.batteries.UseableECPercent).ToString("P")),
+                    Tooltip = Localizer.Format("#LOC_BV_Control_UseBatteries_Tooltip", (this.batteries.UseableECRatio).ToString("P")),
 					GetValue = GetUseBatteries,
 					SelectedCallback = UseBatteriesChanged
                 }
@@ -296,7 +296,7 @@ namespace BonVoyage
 				if (this.batteries.AllowNoGeneratedPower || this.requiredPower < this.electricPower)
                 {
                     batteries.ECPerSecondConsumed = Math.Max(requiredPower - electricPower_Other, 0); // If there is more other power than required power, we don't need batteries
-					this.batteries.MaxUsedEC = this.batteries.MaxAvailableEC * this.batteries.UseableECPercent; 
+					this.batteries.MaxUsedEC = this.batteries.MaxAvailableEC * this.batteries.UseableECRatio; 
                     if (batteries.ECPerSecondConsumed > 0)
                     {
                         double halfday = vessel.mainBody.rotationPeriod / 2; // in seconds
