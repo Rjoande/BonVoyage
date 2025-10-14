@@ -80,7 +80,7 @@ namespace BonVoyage.MovementControllers
 			{
 				this.maxSpeedBase = this.wheelTestResult.maxSpeedSum / this.wheelTestResult.online;
 				this.wheelsPercentualModifier = Math.Min(70, (40 + 5 * this.wheelTestResult.online));
-				this.averageSpeed = maxSpeedBase * Convert.ToDouble(wheelsPercentualModifier) / 100 * (100 / Convert.ToDouble(throttle));
+				this.averageSpeed = this.maxSpeedBase * Convert.ToDouble(this.wheelsPercentualModifier) / 100 * (100 / Convert.ToDouble(throttle));
 			}
 			else
 				this.maxSpeedBase = this.averageSpeed = 0;

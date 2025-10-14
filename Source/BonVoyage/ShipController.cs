@@ -121,7 +121,7 @@ namespace BonVoyage
                 new DisplayedSystemCheckWidget
                 {
                     Label = Localizer.Format("#LOC_BV_Control_AverageSpeed"),
-                    Text = this.moveController.averageSpeedAsText,
+                    Text = this.moveController.AverageSpeedAsText,
                     Tooltip = Localizer.Format("#LOC_BV_Control_SpeedBase") + ": " + this.moveController.maxSpeedBase.ToString("F") + " m/s\n"
                         + (manned ? Localizer.Format("#LOC_BV_Control_DriverBonus") + ": " + crewSpeedBonus.ToString() + "%\n" : Localizer.Format("#LOC_BV_Control_UnmannedPenalty") + ": " + GetUnmannedSpeedPenalty().ToString() + "%\n")
                         + Localizer.Format("#LOC_BV_Control_SpeedAtNight") + ": " + averageSpeedAtNight.ToString("F") + " m/s\n"
