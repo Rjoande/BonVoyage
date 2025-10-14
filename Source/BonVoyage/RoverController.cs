@@ -92,8 +92,8 @@ namespace BonVoyage
             // Load values from config if it isn't the first run of the mod (we are reseting vessel on the first run)
             if (!Configuration.FirstRun)
             {
-                averageSpeedAtNight = double.Parse(BVModule.GetValue("averageSpeedAtNight") != null ? BVModule.GetValue("averageSpeedAtNight") : "0");
-                manned = bool.Parse(BVModule.GetValue("manned") != null ? BVModule.GetValue("manned") : "false");
+				this.averageSpeedAtNight = double.Parse(BVModule.GetValue("averageSpeedAtNight") ?? "0");
+				this.manned = bool.Parse(BVModule.GetValue("manned") ?? "false");
             }
 
             speedMultiplier = 1.0;

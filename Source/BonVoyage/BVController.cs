@@ -170,13 +170,14 @@ namespace BonVoyage
             // Load values from config if it isn't the first run of the mod (we are reseting vessel on the first run)
             if (!Configuration.FirstRun)
             {
-                active = bool.Parse(BVModule.GetValue("active") != null ? BVModule.GetValue("active") : "false");
-                shutdown = bool.Parse(BVModule.GetValue("shutdown") != null ? BVModule.GetValue("shutdown") : "false");
-                arrived = bool.Parse(BVModule.GetValue("arrived") != null ? BVModule.GetValue("arrived") : "false");
-                targetLatitude = double.Parse(BVModule.GetValue("targetLatitude") != null ? BVModule.GetValue("targetLatitude") : "0");
-                targetLongitude = double.Parse(BVModule.GetValue("targetLongitude") != null ? BVModule.GetValue("targetLongitude") : "0");
-                distanceToTarget = double.Parse(BVModule.GetValue("distanceToTarget") != null ? BVModule.GetValue("distanceToTarget") : "0");
-                distanceTravelled = double.Parse(BVModule.GetValue("distanceTravelled") != null ? BVModule.GetValue("distanceTravelled") : "0");
+				this.active = bool.Parse(this.BVModule.GetValue("active") ?? "false");
+				this.shutdown = bool.Parse(this.BVModule.GetValue("shutdown") ?? "false");
+				this.arrived = bool.Parse(this.BVModule.GetValue("arrived") ?? "false");
+				this.targetLatitude = double.Parse(this.BVModule.GetValue("targetLatitude") ?? "0");
+				this.targetLongitude = double.Parse(this.BVModule.GetValue("targetLongitude") ?? "0");
+				this.distanceToTarget = double.Parse(this.BVModule.GetValue("distanceToTarget") ?? "0");
+				this.distanceTravelled = double.Parse(this.BVModule.GetValue("distanceTravelled") ?? "0");
+
                 if (BVModule.GetValue("pathEncoded") != null)
                     path = PathUtils.DecodePath(BVModule.GetValue("pathEncoded"));
 

@@ -36,8 +36,8 @@ namespace BonVoyage.MovementControllers
 			// Load values from config if it isn't the first run of the mod (we are reseting vessel on the first run)
 			if (!Configuration.FirstRun)
 			{
-				this.averageSpeed = double.Parse(moduleConfigNode.GetValue("averageSpeed") != null ? moduleConfigNode.GetValue("averageSpeed") : "0");
-				this.vesselHeightFromTerrain = double.Parse(moduleConfigNode.GetValue("vesselHeightFromTerrain") != null ? moduleConfigNode.GetValue("vesselHeightFromTerrain") : "0");
+				this.averageSpeed = double.Parse(moduleConfigNode.GetValue("averageSpeed") ?? "0");
+				this.vesselHeightFromTerrain = double.Parse(moduleConfigNode.GetValue("vesselHeightFromTerrain") ?? "0");
 			}
 
 			this.maxSpeedBase = 0.5;
