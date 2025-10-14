@@ -44,6 +44,7 @@ namespace BonVoyage
 
         // Config values
         private double averageSpeedAtNight = 0;
+		private string AverageSpeedAtNightAsText => (Double.IsNaN(this.averageSpeedAtNight) || Double.IsInfinity(this.averageSpeedAtNight) ? "---" : this.averageSpeedAtNight.ToString("F") + " m/s");
         private bool manned = false;
         // Config values
 
@@ -130,11 +131,11 @@ namespace BonVoyage
                     Tooltip =
                         this.moveController.averageSpeed > 0
                         ?
-                        Localizer.Format("#LOC_BV_Control_SpeedBase") + ": " + this.moveController.maxSpeedBase.ToString("F") + " m/s\n"
-                            + Localizer.Format("#LOC_BV_Control_WheelsModifier") + ": " + ((WheelController)this.moveController).wheelsPercentualModifier.ToString("F") + "%\n"
+						Localizer.Format("#LOC_BV_Control_SpeedBase") + ": " + this.moveController.MaxSpeedBaseAsText + "\n"
+							+ Localizer.Format("#LOC_BV_Control_WheelsModifier") + ": " + ((WheelController)this.moveController).WheelsPercentualModifierAsText + "\n"
                             + (manned ? Localizer.Format("#LOC_BV_Control_DriverBonus") + ": " + crewSpeedBonus.ToString() + "%\n" : Localizer.Format("#LOC_BV_Control_UnmannedPenalty") + ": " + GetUnmannedSpeedPenalty().ToString() + "%\n")
                             + (speedReduction > 0 ? Localizer.Format("#LOC_BV_Control_PowerPenalty") + ": " + (100*speedReduction).ToString("F") + "%\n" : "")
-                            + Localizer.Format("#LOC_BV_Control_SpeedAtNight") + ": " + averageSpeedAtNight.ToString("F") + " m/s"
+                            + Localizer.Format("#LOC_BV_Control_SpeedAtNight") + ": " + this.AverageSpeedAtNightAsText
                         :
                         Localizer.Format("#LOC_BV_Control_WheelsNotOnline")
                 }

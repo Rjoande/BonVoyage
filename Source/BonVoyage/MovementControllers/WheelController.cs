@@ -48,6 +48,7 @@ namespace BonVoyage.MovementControllers
 		}
 
 		internal int wheelsPercentualModifier;							// Speed modifier based on wheels
+		internal string WheelsPercentualModifierAsText => (Double.IsNaN(this.maxSpeedBase) || Double.IsInfinity(this.maxSpeedBase) ? "---" : this.maxSpeedBase.ToString("F") + "%");
 
 		internal WheelController(Vessel vessel, ConfigNode moduleConfigNode) : base(vessel, moduleConfigNode)
 		{

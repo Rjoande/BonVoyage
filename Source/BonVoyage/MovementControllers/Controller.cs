@@ -26,6 +26,7 @@ namespace BonVoyage.MovementControllers
 		public string AverageSpeedAsText => (Double.IsNaN(this.averageSpeed) || Double.IsInfinity(this.averageSpeed) ? "---" : this.averageSpeed.ToString("F") + " m/s");
 		public double vesselHeightFromTerrain = 0;
 		public double maxSpeedBase;					// maximum speed without modifiers
+		public string MaxSpeedBaseAsText => (Double.IsNaN(this.maxSpeedBase) || Double.IsInfinity(this.maxSpeedBase) ? "---" : this.maxSpeedBase.ToString("F") + " m/s");
 
 		protected readonly Vessel vessel;
 
