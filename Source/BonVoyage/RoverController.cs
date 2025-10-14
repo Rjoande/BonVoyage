@@ -51,7 +51,7 @@ namespace BonVoyage
         private double angle; // Angle between the main body and the main sun
         private int crewSpeedBonus; // Speed modifier based on the available crew
 
-		// Reduction of speed based on difference between required and available power in percents
+		// Reduction of speed based on difference between required and available power in Ratio [0..1]
 		private double SpeedReduction
 		{
 			get
@@ -59,10 +59,14 @@ namespace BonVoyage
 				double speedReduction = 0;
 				if (this.batteries.AllowNoGeneratedPower)
 				{
-					// Total energy consumed by a whol enight driving.
-					double totalEcNight = this.batteries.ECPerSecondConsumed * this.vessel.mainBody.rotationPeriod / 2; // half a day in seconds;
-					if (totalEcNight > this.batteries.MaxUsedEC)
-						speedReduction = (totalEcNight - this.batteries.MaxUsedEC) / totalEcNight;
+					double nightLenght = this.vessel.mainBody.rotationPeriod / 2; // half a day in seconds;
+					double timeToTarget = this.RemainingDistanceToTarget / this.AverageSpeed;
+					if (nightLenght > timeToTarget)
+					{
+						double totalEc = this.batteries.ECPerSecondConsumed * nightLenght; // Total energy consumed by a whole night driving.
+						speedReduction = this.batteries.MaxUsedEC / totalEc;
+					}
+					// else Go full throttle, baby!
 				}
 				else if (this.requiredPower > this.electricPower)
 				{   // If required power is greater than total power generated, then average speed can be lowered up to 75%
