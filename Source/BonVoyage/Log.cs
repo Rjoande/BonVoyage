@@ -23,5 +23,12 @@ namespace BonVoyage
 		{
 			UnityEngine.Debug.LogFormat("[BonVoyage] " + msg, @params);
 		}
+
+#if DEBUG
+		internal static void dbg(Exception e)
+		{
+			UnityEngine.Debug.LogException(e);
+		}
+#endif
 	}
 }

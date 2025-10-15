@@ -257,7 +257,12 @@ namespace BonVoyage
                     else
                         State = VesselState.Moving;
                 }
-                catch { }
+				catch (Exception e)
+				{
+#if DEBUG
+					Log.dbg(e);
+#endif
+				}
             }
 
             Save(currentTime);

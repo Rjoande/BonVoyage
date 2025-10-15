@@ -88,7 +88,12 @@ namespace BonVoyage.PowerSources
 					ResourceRatio ec = mrc[i].outputList.Find(x => x.ResourceName == "ElectricCharge"); // NullArgumentException when not found
 					ecRatio = ec.Ratio;
 				}
-				catch { }
+				catch (Exception e)
+				{
+#if DEBUG
+					Log.dbg(e);
+#endif
+				}
 
 				if (ecRatio > 0)
 				{
