@@ -34,7 +34,11 @@ namespace BonVoyage
     {
         #region internal properties
 
-        internal override double AverageSpeed { get { return ((angle <= 90) ? (this.moveController.averageSpeed * speedMultiplier) : (averageSpeedAtNight * speedMultiplier)); } }
+		internal override double AverageSpeed =>
+			(this.IsDay)
+				? (this.moveController.averageSpeed * speedMultiplier)
+				: (averageSpeedAtNight * speedMultiplier)
+			;
 
         #endregion
 

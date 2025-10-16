@@ -34,7 +34,11 @@ namespace BonVoyage
     {
         #region internal properties
 
-		internal override double AverageSpeed { get { return ((this.angle <= 90) || (this.batteries.Use && (this.batteries.CurrentEC > 0)) ? (this.moveController.averageSpeed * this.speedMultiplier) : (this.averageSpeedAtNight * this.speedMultiplier)); } }
+		internal override double AverageSpeed =>
+				this.IsDay || this.batteries.PowerIsAvailable
+					? (this.moveController.averageSpeed * this.speedMultiplier)
+					: (this.averageSpeedAtNight * this.speedMultiplier)
+			;
 
 		#endregion
 
@@ -49,7 +53,6 @@ namespace BonVoyage
         // Config values
 
         private double speedMultiplier;
-        private double angle; // Angle between the main body and the main sun
         private int crewSpeedBonus; // Speed modifier based on the available crew
 
 		// Reduction of speed based on difference between required and available power in Ratio [0..1]
@@ -102,7 +105,6 @@ namespace BonVoyage
             }
 
             speedMultiplier = 1.0;
-            angle = 0;
             crewSpeedBonus = 0;
         }
 
@@ -467,8 +469,11 @@ namespace BonVoyage
         /// <param name="currentTime"></param>
         internal override void Update(double currentTime)
         {
+			base.Update(currentTime);
+
             if (vessel == null)
                 return;
+
             if (vessel.isActiveVessel)
             {
                 lastTimeUpdated = 0;
@@ -488,10 +493,6 @@ namespace BonVoyage
                 BVModule.SetValue("lastTimeUpdated", currentTime.ToString());
                 return;
             }
-            
-            Vector3d roverPos = vessel.mainBody.position - vessel.GetWorldPos3D();
-            Vector3d toMainStar = vessel.mainBody.position - FlightGlobals.Bodies[mainStarIndex].position;
-            angle = Vector3d.Angle(roverPos, toMainStar); // Angle between rover and the main star
 
             // Speed penalties at twighlight and at night
             if ((angle > 90) && manned) // night
@@ -512,22 +513,22 @@ namespace BonVoyage
                 // Process fuel cells before batteries
                 if (!CheatOptions.InfinitePropellant 
                     && fuelCells.Use 
-                    && ((angle > 90) 
+                    && (this.IsNight
                         || (batteries.ECPerSecondGenerated - fuelCells.OutputValue <= 0)
                         || (batteries.CurrentEC < batteries.MaxUsedEC))) // Night, not enough solar power or we need to recharge batteries
                 {
-                    if (!((angle > 90) && (batteries.CurrentEC == 0))) // Don't use fuel cells, if it's night and current EC of batteries is zero. This means, that there isn't enough power to recharge them and fuel is wasted.
+                    if (!(this.IsNight && (batteries.CurrentEC == 0))) // Don't use fuel cells, if it's night and current EC of batteries is zero. This means, that there isn't enough power to recharge them and fuel is wasted.
                         this.fuelCells.Update(ref deltaT, ref deltaTOver);
                 }
 
-                if (angle <= 90) // day
+				if (this.IsDay) // day
                     batteries.CurrentEC = Math.Min(batteries.CurrentEC + batteries.ECPerSecondGenerated * deltaT, batteries.MaxUsedEC);
                 else // night
                     batteries.CurrentEC = Math.Max(batteries.CurrentEC - batteries.ECPerSecondConsumed * deltaT, 0);
             }
 
             // No moving at night, if there isn't enough power
-			if ((this.angle > 90) && (this.averageSpeedAtNight == 0.0) && !(this.batteries.Use && (this.batteries.CurrentEC > 0)))
+			if (this.IsNight && (this.averageSpeedAtNight == 0.0) && !(this.batteries.Use && (this.batteries.CurrentEC > 0)))
             {
                 State = VesselState.AwaitingSunlight;
                 lastTimeUpdated = currentTime;

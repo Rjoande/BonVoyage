@@ -66,6 +66,11 @@ namespace BonVoyage
         #region internal properties
 
         internal Vessel vessel; // Vessel containing BonVoyageModule
+		protected Vector3d vesselPos;
+		protected double angle; // Angle between the main body and the main sun
+
+        internal bool IsNight => this.angle > 90;
+        internal bool IsDay => this.angle <= 90;
 
         internal bool Shutdown
         {
@@ -162,6 +167,8 @@ namespace BonVoyage
         {
             vessel = v;
             BVModule = module;
+			angle = 0;
+
 			this.displayedSystemCheckWidgets.Clear();
 
 			this.fuelCells = fuelCellPowerSource;
@@ -367,6 +374,7 @@ namespace BonVoyage
         internal virtual void SystemCheck()
         {
             mainStarIndex = Tools.GetMainStar(vessel).flightGlobalsIndex;
+			this.calcCurrentSituation();
 
             // Get power production
 			this.electricPower_Solar = this.solarPower.GetAvailablePower();
@@ -458,6 +466,7 @@ namespace BonVoyage
                 return;
 
             State = VesselState.Idle;
+			this.calcCurrentSituation();
 
             Save(currentTime);
         }
@@ -550,6 +559,12 @@ namespace BonVoyage
             return 80;
         }
 
+		private void calcCurrentSituation()
+		{
+			Vector3d toMainStar = this.vessel.mainBody.position - FlightGlobals.Bodies[mainStarIndex].position;
+			this.vesselPos = vessel.mainBody.position - this.vessel.GetWorldPos3D();
+			this.angle = Vector3d.Angle(this.vesselPos, toMainStar); // Angle between rover and the main star
+		}
     }
 
 }
