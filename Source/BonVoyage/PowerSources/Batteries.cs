@@ -22,9 +22,8 @@ namespace BonVoyage.PowerSources
     /// <summary>
     /// Information about batteries
     /// </summary>
-    internal class Batteries
+    internal class Batteries : PowerSupply
     {
-		internal bool Use; // Use batteries during a night
 		internal bool AllowNoGeneratedPower; // Allows rovering when there's no active source of EC.
         internal double MaxAvailableEC; // Max EC available from all activated batteries
 		internal double UseableECRatio = 0.5; // By default, we are using only half of max available EC;
@@ -32,6 +31,9 @@ namespace BonVoyage.PowerSources
         internal double ECPerSecondConsumed; // EC per second consumed by wheels
         internal double ECPerSecondGenerated; // EC per second generated (generated power minus required power)
         internal double CurrentEC; // Current EC status of batteries
+
+		internal override bool PowerIsAvailable => this.Use && (this.CurrentEC > 0.1);
+		internal override bool PowerIsExhausted => this.Use && this.CurrentEC <= 0.1;
 
 		internal void Read(ConfigNode controllerNode)
 		{

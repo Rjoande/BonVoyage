@@ -528,7 +528,7 @@ namespace BonVoyage
             }
 
             // No moving at night, if there isn't enough power
-			if (this.IsNight && (this.averageSpeedAtNight == 0.0) && !(this.batteries.Use && (this.batteries.CurrentEC > 0)))
+			if (this.IsNight && (this.averageSpeedAtNight == 0.0) && !this.batteries.PowerIsAvailable)
             {
                 State = VesselState.AwaitingSunlight;
                 lastTimeUpdated = currentTime;
@@ -620,7 +620,7 @@ namespace BonVoyage
             Save(currentTime);
 
             // Stop the rover, we don't have enough of fuel
-			if (deltaTOver > 0 || (!CheatOptions.InfiniteElectricity && this.batteries.Use && this.batteries.CurrentEC <= 0.1))
+			if (deltaTOver > 0 || (!CheatOptions.InfiniteElectricity && this.batteries.PowerIsExhausted))
             {
                 active = false;
                 arrived = true;
@@ -638,7 +638,7 @@ namespace BonVoyage
                     ScreenMessages.PostScreenMessage(vessel.vesselName + " " + Localizer.Format("#LOC_BV_Warning_Stopped") + ".", 5f).color = Color.red;
                 }
 
-				if (!CheatOptions.InfiniteElectricity && this.batteries.Use && this.batteries.CurrentEC <= 0.1)
+				if (!CheatOptions.InfiniteElectricity && this.batteries.PowerIsExhausted)
                     NotifyBatteryEmpty();
 				else
 	                NotifyNotEnoughFuel();

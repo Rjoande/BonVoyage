@@ -18,9 +18,8 @@
 using System;
 namespace BonVoyage.PowerSources
 {
-	internal abstract class SolarPower
+	internal abstract class SolarPower : PowerSupply
 	{
-		internal bool Use;
 		internal bool AutoDeploy;
 		internal bool DriveWhenDeployed;
 
@@ -51,6 +50,9 @@ namespace BonVoyage.PowerSources
 		{
 		}
 
+		internal override bool PowerIsAvailable => false;
+		internal override bool PowerIsExhausted => this.Use;	// If this PowerSupply is in "use", then we are exhausted by definition. If we are not in use, we are not.
+
 		protected override double calculateAvailablePower()
 		{
 			return 0;
@@ -62,6 +64,11 @@ namespace BonVoyage.PowerSources
 
 	internal class StockSolarPower : SolarPower
 	{
+		private double solarPower = 0;
+
+		internal override bool PowerIsAvailable => this.Use && this.solarPower > 0.01;
+		internal override bool PowerIsExhausted => this.Use && this.solarPower < 0.01;
+
 		internal StockSolarPower(Vessel vessel) : base(vessel)
 		{
 			this.mainStarIndex = Tools.GetMainStar(vessel).flightGlobalsIndex;
@@ -116,7 +123,7 @@ namespace BonVoyage.PowerSources
 				}
 			}
 
-			return solarPower;
+			return this.solarPower = solarPower;
 		}
 	}
 }
