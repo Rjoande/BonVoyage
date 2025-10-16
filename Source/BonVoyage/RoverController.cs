@@ -765,7 +765,7 @@ namespace BonVoyage
 
 		private void engageBrakesOrNot(bool v)
 		{
-			if (Configuration.AutoEngageBreaks)
+			if (this.vessel == FlightGlobals.ActiveVessel && Configuration.AutoEngageBreaks)
 				FlightGlobals.ActiveVessel.ActionGroups.SetGroup(KSPActionGroup.Brakes, v);
 		}
 
