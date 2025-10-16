@@ -61,7 +61,7 @@ namespace BonVoyage
     /// <summary>
     /// Basic controller
     /// </summary>
-    internal class BVController
+    internal abstract class BVController
     {
         #region internal properties
 
@@ -451,7 +451,7 @@ namespace BonVoyage
         /// Update vessel
         /// </summary>
         /// <param name="currentTime"></param>
-        internal virtual void Update(double currentTime)
+        internal void Update(double currentTime)
         {
             if (vessel == null)
                 return;
@@ -465,11 +465,24 @@ namespace BonVoyage
             if (!active || vessel.loaded)
                 return;
 
-            State = VesselState.Idle;
+			// If we don't know the last time of update, then set it and wait for the next update cycle
+			if (0 == this.lastTimeUpdated)
+			{
+				State = VesselState.Idle;
+				this.lastTimeUpdated = currentTime;
+				BVModule.SetValue("lastTimeUpdated", currentTime.ToString());
+				return;
+			}
+
+			State = VesselState.Idle;
 			this.calcCurrentSituation();
+
+			this.update(currentTime);
 
             Save(currentTime);
         }
+
+        protected abstract void update(double currentTime);
 
 
         /// <summary>

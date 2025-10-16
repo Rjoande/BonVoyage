@@ -152,32 +152,11 @@ namespace BonVoyage
         }
 
         /// <summary>
-        /// Update vessel
+        /// Update Kerbal
         /// </summary>
         /// <param name="currentTime"></param>
-        internal override void Update(double currentTime)
+        protected override void update(double currentTime)
         {
-            if (vessel == null)
-                return;
-            if (vessel.isActiveVessel)
-            {
-                lastTimeUpdated = 0;
-                if (active)
-                    ScreenMessages.PostScreenMessage(Localizer.Format("#LOC_BV_AutopilotActive"), 10f).color = Color.red;
-                return;
-            }
-
-            if (!active || vessel.loaded)
-                return;
-
-            // If we don't know the last time of update, then set it and wait for the next update cycle
-            if (lastTimeUpdated == 0)
-            {
-                State = VesselState.Idle;
-                lastTimeUpdated = currentTime;
-                BVModule.SetValue("lastTimeUpdated", currentTime.ToString());
-                return;
-            }
 
             double deltaT = currentTime - lastTimeUpdated; // Time delta from the last update
             double deltaTOver = 0; // deltaT which is calculated from a value over the maximum resource amout available
@@ -264,8 +243,6 @@ namespace BonVoyage
 #endif
 				}
             }
-
-            Save(currentTime);
         }
 
         /// <summary>

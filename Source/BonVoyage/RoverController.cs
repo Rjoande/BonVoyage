@@ -464,35 +464,11 @@ namespace BonVoyage
 
 
         /// <summary>
-        /// Update vessel
+        /// Update Rover
         /// </summary>
         /// <param name="currentTime"></param>
-        internal override void Update(double currentTime)
+        protected override void update(double currentTime)
         {
-			base.Update(currentTime);
-
-            if (vessel == null)
-                return;
-
-            if (vessel.isActiveVessel)
-            {
-                lastTimeUpdated = 0;
-                if (active)
-                    ScreenMessages.PostScreenMessage(Localizer.Format("#LOC_BV_AutopilotActive"), 10f).color = Color.red;
-                return;
-            }
-            
-            if (!active || vessel.loaded)
-                return;
-
-            // If we don't know the last time of update, then set it and wait for the next update cycle
-            if (lastTimeUpdated == 0)
-            {
-                State = VesselState.Idle;
-                lastTimeUpdated = currentTime;
-                BVModule.SetValue("lastTimeUpdated", currentTime.ToString());
-                return;
-            }
 
             // Speed penalties at twighlight and at night
             if ((angle > 90) && manned) // night
@@ -616,8 +592,6 @@ namespace BonVoyage
 #endif
 				}
             }
-
-            Save(currentTime);
 
             // Stop the rover, we don't have enough of fuel
 			if (deltaTOver > 0 || (!CheatOptions.InfiniteElectricity && this.batteries.PowerIsExhausted))

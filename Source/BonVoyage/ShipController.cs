@@ -53,7 +53,6 @@ namespace BonVoyage
         // Config values
 
         private double speedMultiplier;
-        private double angle; // Angle between the main body and the main sun
         private int crewSpeedBonus; // Speed modifier based on the available crew
         private int throttle = 100; // Allowed values: 100, 75, 50, 25
 
@@ -380,37 +379,11 @@ namespace BonVoyage
 
 
         /// <summary>
-        /// Update vessel
+        /// Update Ship
         /// </summary>
         /// <param name="currentTime"></param>
-        internal override void Update(double currentTime)
+        protected override void update(double currentTime)
         {
-            if (vessel == null)
-                return;
-            if (vessel.isActiveVessel)
-            {
-                lastTimeUpdated = 0;
-                if (active)
-                    ScreenMessages.PostScreenMessage(Localizer.Format("#LOC_BV_AutopilotActive"), 10f).color = Color.red;
-                return;
-            }
-
-            if (!active || vessel.loaded)
-                return;
-
-            // If we don't know the last time of update, then set it and wait for the next update cycle
-            if (lastTimeUpdated == 0)
-            {
-                State = VesselState.Idle;
-                lastTimeUpdated = currentTime;
-                BVModule.SetValue("lastTimeUpdated", currentTime.ToString());
-                return;
-            }
-
-            Vector3d shipPos = vessel.mainBody.position - vessel.GetWorldPos3D();
-            Vector3d toMainStar = vessel.mainBody.position - FlightGlobals.Bodies[mainStarIndex].position;
-            angle = Vector3d.Angle(shipPos, toMainStar); // Angle between rover and the main star
-
             // Speed penalties at twighlight and at night
             if ((angle > 90) && manned) // night
                 speedMultiplier = 0.25;
@@ -516,8 +489,6 @@ namespace BonVoyage
 #endif
 				}
             }
-
-            Save(currentTime);
 
             // Stop the ship, we don't have enough of propellant
             if (deltaTOver > 0)
