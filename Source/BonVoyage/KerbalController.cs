@@ -115,6 +115,7 @@ namespace BonVoyage
             base.SystemCheck();
 			this.fuelCells.Check(100);
 			this.moveController.Check(100);
+			this.calcCurrentSituation();
         }
 
 
@@ -157,6 +158,7 @@ namespace BonVoyage
         /// <param name="currentTime"></param>
         protected override void update(double currentTime)
         {
+			this.calcCurrentSituation();
 
             double deltaT = currentTime - lastTimeUpdated; // Time delta from the last update
             double deltaTOver = 0; // deltaT which is calculated from a value over the maximum resource amout available
@@ -260,6 +262,11 @@ namespace BonVoyage
             MessageSystem.Instance.AddMessage(message);
         }
 
+		private void calcCurrentSituation()
+		{
+			KerbalEVA m = this.vessel.FindPartModuleImplementing<KerbalEVA>();
+			m.lampOn = this.IsNight;
+		}
     }
 
 }

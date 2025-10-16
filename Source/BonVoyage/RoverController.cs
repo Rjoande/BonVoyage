@@ -321,6 +321,7 @@ namespace BonVoyage
                     UseBatteriesChanged(false);
                     ScreenMessages.PostScreenMessage(Localizer.Format("#LOC_BV_Warning_CantUseBatteries") + " " + Localizer.Format("#LOC_BV_Warning_LowPowerRover") + ".", 5f).color = Color.yellow;
                 }
+				this.calcCurrentSituation();
             }
 
 			double speedReduction = this.SpeedReduction;
@@ -469,6 +470,7 @@ namespace BonVoyage
         /// <param name="currentTime"></param>
         protected override void update(double currentTime)
         {
+			this.calcCurrentSituation();
 
             // Speed penalties at twighlight and at night
             if ((angle > 90) && manned) // night
@@ -766,6 +768,13 @@ namespace BonVoyage
 			if (Configuration.AutoEngageBreaks)
 				FlightGlobals.ActiveVessel.ActionGroups.SetGroup(KSPActionGroup.Brakes, v);
 		}
-    }
+
+		private void calcCurrentSituation()
+		{
+			if (this.vessel == FlightGlobals.ActiveVessel && this.manned)
+				FlightGlobals.ActiveVessel.ActionGroups.SetGroup(KSPActionGroup.Light, this.IsNight);
+		}
+
+	}
 
 }
