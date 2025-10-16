@@ -147,9 +147,9 @@ namespace BonVoyage
                     Label = Localizer.Format("#LOC_BV_Control_GeneratedPower"),
 					Text = this.electricPower.ToString("F"),
                     Tooltip = Localizer.Format("#LOC_BV_Control_SolarPower") + ": " + electricPower_Solar.ToString("F") + "\n" + Localizer.Format("#LOC_BV_Control_GeneratorPower") + ": " + electricPower_Other.ToString("F") + "\n"
-						+ Localizer.Format("#LOC_BV_Control_UseBatteries_Usage") + ": " + (this.batteries.Use ? (this.batteries.MaxUsedEC.ToString("F0") + " / " + this.batteries.MaxAvailableEC.ToString("F0") + " EC") : Localizer.Format("#LOC_BV_Control_No"))
+						+ Localizer.Format("#LOC_BV_Control_UseBatteries_Usage") + ": " + (this.batteries.Use ? (this.batteries.MaxUsedEC.ToString("F0") + " / " + this.batteries.MaxAvailableEC.ToString("F0") + " EC") : Localizer.Format("#LOC_BV_Control_No")) + "\n"
 						+ Localizer.Format("#LOC_BV_Control_UseSolarPanels_Usage") + ": " + (this.solarPower.Use ? Localizer.Format("#LOC_BV_Control_Yes") : Localizer.Format("#LOC_BV_Control_No"))
-						+ (this.batteries.AllowNoGeneratedPower ? Localizer.Format("LOC_BV_Control_UseBatteriesOnly_Usage") : "")
+						+ (this.batteries.AllowNoGeneratedPower ? "\n" + Localizer.Format("#LOC_BV_Control_UseBatteriesOnly_Usage") : "")
                 }
             };
 			this.displayedSystemCheckWidgets.Add(result);
