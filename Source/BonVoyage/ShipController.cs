@@ -430,7 +430,7 @@ namespace BonVoyage
             }
 
             if (!CheatOptions.InfinitePropellant)
-				deltaT = this.fuelCells.Update(deltaT, deltaTOver);
+				this.fuelCells.Update(ref deltaT, ref deltaTOver);
 
             double deltaS = AverageSpeed * deltaT; // Distance delta from the last update
             distanceTravelled += deltaS;

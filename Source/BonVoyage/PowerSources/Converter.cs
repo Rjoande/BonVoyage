@@ -92,6 +92,6 @@ namespace BonVoyage.PowerSources
 		/// <returns>returns true if enough resources available, otherwise false (halting the processing)</returns>
 		internal abstract bool ProcessResources(IResourceBroker broker);
 
-		internal abstract double Update(double deltaT, double deltaTOver);
+		internal abstract void Update(ref double deltaT, ref double deltaTOver);
 	}
 }

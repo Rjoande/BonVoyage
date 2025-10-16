@@ -182,7 +182,7 @@ namespace BonVoyage
             double deltaT = currentTime - lastTimeUpdated; // Time delta from the last update
             double deltaTOver = 0; // deltaT which is calculated from a value over the maximum resource amout available
 
-            deltaT = this.fuelCells.Update(deltaT, deltaTOver);
+            this.fuelCells.Update(ref deltaT, ref deltaTOver);
 
             double deltaS = AverageSpeed * deltaT; // Distance delta from the last update
             distanceTravelled += deltaS;

@@ -207,7 +207,7 @@ namespace BonVoyage.PowerSources
 			return otherPower;
 		}
 
-		internal override double Update(double deltaT, double deltaTOver)
+		internal override void Update(ref double deltaT, ref double deltaTOver)
 		{
 			List<Resource> iList = this.InputResources;
 			for (int i = 0; i < iList.Count; ++i)
@@ -224,8 +224,6 @@ namespace BonVoyage.PowerSources
 				for (int i = 0; i < iList.Count; ++i)
 					iList[i].CurrentAmountUsed -= iList[i].Ratio * deltaTOver;
 			}
-
-			return deltaT;
 		}
 
 		internal override bool ProcessResources(IResourceBroker broker)

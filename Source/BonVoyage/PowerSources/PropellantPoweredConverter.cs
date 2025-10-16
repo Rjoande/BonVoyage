@@ -197,7 +197,7 @@ namespace BonVoyage.PowerSources
 			}
 		}
 
-		internal override double Update(double deltaT, double deltaTOver)
+		internal override void Update(ref double deltaT, ref double deltaTOver)
 		{
 			for (int i = 0; i < propellants.Count; ++i)
 			{
@@ -212,8 +212,6 @@ namespace BonVoyage.PowerSources
 				for (int i = 0; i < propellants.Count; ++i)
 					propellants[i].CurrentAmountUsed -= propellants[i].FuelFlow * deltaTOver;
 			}
-
-			return deltaT;
 		}
 
 		internal override bool ProcessResources(IResourceBroker broker)

@@ -517,7 +517,7 @@ namespace BonVoyage
                         || (batteries.CurrentEC < batteries.MaxUsedEC))) // Night, not enough solar power or we need to recharge batteries
                 {
                     if (!((angle > 90) && (batteries.CurrentEC == 0))) // Don't use fuel cells, if it's night and current EC of batteries is zero. This means, that there isn't enough power to recharge them and fuel is wasted.
-                        deltaT = this.fuelCells.Update(deltaT, deltaTOver);
+                        this.fuelCells.Update(ref deltaT, ref deltaTOver);
                 }
 
                 if (angle <= 90) // day
