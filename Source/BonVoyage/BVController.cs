@@ -474,7 +474,7 @@ namespace BonVoyage
 				return;
 			}
 
-			State = VesselState.Idle;
+			State = VesselState.Idle;   // Prevent flawed logic on the updates below to play havoc.
 			this.calcCurrentSituation();
 
 			this.update(currentTime);
