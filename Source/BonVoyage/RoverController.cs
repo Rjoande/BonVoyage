@@ -595,14 +595,13 @@ namespace BonVoyage
 				}
             }
 
-            // Stop the rover, we don't have enough of fuel
+            // Stop the rover, we don't have enough juice
 			if (deltaTOver > 0 || (!CheatOptions.InfiniteElectricity && this.batteries.PowerIsExhausted))
             {
                 active = false;
-                arrived = true;
+				this.arrived = false;
                 BVModule.SetValue("active", "False");
-                BVModule.SetValue("arrived", "True");
-                BVModule.SetValue("pathEncoded", "");
+				this.BVModule.SetValue("arrived", "False");
 
                 // Dewarp
                 if (Configuration.AutomaticDewarp)

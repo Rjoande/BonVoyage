@@ -494,10 +494,9 @@ namespace BonVoyage
             if (deltaTOver > 0)
             {
                 active = false;
-                arrived = true;
+				this.arrived = false;
                 BVModule.SetValue("active", "False");
-                BVModule.SetValue("arrived", "True");
-                BVModule.SetValue("pathEncoded", "");
+				this.BVModule.SetValue("arrived", "False");
 
                 // Dewarp
                 if (Configuration.AutomaticDewarp)
