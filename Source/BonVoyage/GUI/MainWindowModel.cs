@@ -163,15 +163,8 @@ namespace BonVoyage
         /// <returns></returns>
         private string GetSpeed(BVController controller)
         {
-            string result = "-";
-            if (controller == null)
-                return result;
-
-            if ((controller.GetVesselState() == VesselState.Moving) || (controller.GetVesselState() == VesselState.AwaitingSunlight))
-            {
-                result = controller.AverageSpeed.ToString("0.##") + " m/s";
-            }
-            return result;
+			if (controller == null) return "---";
+			return controller.AverageSpeedAsText;
         }
 
 
@@ -182,15 +175,8 @@ namespace BonVoyage
         /// <returns></returns>
         private string GetDistanceToTarget(BVController controller)
         {
-            string result = "-";
-            if (controller == null)
-                return result;
-
-            if ((controller.GetVesselState() == VesselState.Moving) || (controller.GetVesselState() == VesselState.AwaitingSunlight))
-            {
-                result = Tools.ConvertDistanceToText(controller.RemainingDistanceToTarget);
-            }
-            return result;
+			if (controller == null) return "---";
+			return controller.RemainingDistanceToTargetAsText;
         }
 
 

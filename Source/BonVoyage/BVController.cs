@@ -106,8 +106,28 @@ namespace BonVoyage
         }
 
         internal double RemainingDistanceToTarget { get { return distanceToTarget - distanceTravelled; } }
-        internal virtual double AverageSpeed { get { return 0; } }
-        internal event EventHandler OnStateChanged;
+		internal string RemainingDistanceToTargetAsText
+		{
+			get
+			{
+				double rddt = this.RemainingDistanceToTarget;
+				if (double.IsNaN(rddt) || double.IsInfinity(rddt)) return "---";
+				return Tools.ConvertDistanceToText(this.RemainingDistanceToTarget);
+			}
+		}
+
+		internal virtual double AverageSpeed { get { return 0; } }
+		internal string AverageSpeedAsText
+		{
+			get
+			{
+				double avs = this.AverageSpeed;
+				if (double.IsNaN(avs) || double.IsInfinity(avs)) return "---";
+				return avs.ToString("0.##") + " m/s";
+			}
+		}
+
+		internal event EventHandler OnStateChanged;
 
         internal double electricPower_Solar; // Electric power from solar panels
         internal double electricPower_Other; // Electric power from other power sources
@@ -309,7 +329,7 @@ namespace BonVoyage
 			result = new DisplayedSystemCheckWidget[] {
 				new DisplayedSystemCheckWidget {
 					Label = Localizer.Format("#LOC_BV_Control_Distance"),
-                    Text = Tools.ConvertDistanceToText(RemainingDistanceToTarget),
+					Text = this.RemainingDistanceToTargetAsText,
                     Tooltip = ""
                 }
             };

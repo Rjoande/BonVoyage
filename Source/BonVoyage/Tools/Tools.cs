@@ -50,7 +50,7 @@ namespace BonVoyage
         /// <returns></returns>
         internal static string ConvertDistanceToText(double distance)
         {
-            string result = "-";
+            string result = "---";
             double n = distance;
             if (n > 0)
             {
