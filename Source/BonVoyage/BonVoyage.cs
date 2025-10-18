@@ -843,7 +843,7 @@ namespace BonVoyage
                 InputLockManager.SetControlLock(lockMask, "BonVoyageInputLock");
                 if (controlViewVisible)
                     ToggleControlWindow();
-                ScreenMessages.PostScreenMessage(Localizer.Format("#LOC_BV_AutopilotActive"), 10f).color = Color.red;
+                ScreenMessages.PostScreenMessage(Localizer.Format("#LOC_BV_AutopilotActive"), 14f).color = CommonWindowProperties.Message_Colour_Confirm_Restrictions;
             }
             else
                 InputLockManager.RemoveControlLock("BonVoyageInputLock");

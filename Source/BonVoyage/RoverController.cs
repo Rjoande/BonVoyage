@@ -329,7 +329,7 @@ namespace BonVoyage
                 else
                 {
                     UseBatteriesChanged(false);
-                    ScreenMessages.PostScreenMessage(Localizer.Format("#LOC_BV_Warning_CantUseBatteries") + " " + Localizer.Format("#LOC_BV_Warning_LowPowerRover") + ".", 5f).color = Color.yellow;
+                    ScreenMessages.PostScreenMessage(Localizer.Format("#LOC_BV_Warning_CantUseBatteries") + " " + Localizer.Format("#LOC_BV_Warning_LowPowerRover") + ".", 5f).color = CommonWindowProperties.Message_Colour_Warning_User_Error;
                 }
 				this.calcCurrentSituation();
             }
@@ -396,7 +396,7 @@ namespace BonVoyage
         {
             if (vessel.situation != Vessel.Situations.LANDED && vessel.situation != Vessel.Situations.PRELAUNCH)
             {
-                ScreenMessages.PostScreenMessage(Localizer.Format("#LOC_BV_Warning_Landed"), 5f).color = Color.yellow;
+                ScreenMessages.PostScreenMessage(Localizer.Format("#LOC_BV_Warning_Landed"), 5f).color = CommonWindowProperties.Message_Colour_Warning;
                 return false;
             }
 
@@ -408,19 +408,19 @@ namespace BonVoyage
 				// No driving until at least 3 operable wheels are touching the ground - tricycles are allowed
 				if ((wc.InTheAir > 0) && (wc.Operable < 3))
 				{
-					ScreenMessages.PostScreenMessage(Localizer.Format("#LOC_BV_Warning_WheelsNotTouching"), 5f).color = Color.yellow;
+					ScreenMessages.PostScreenMessage(Localizer.Format("#LOC_BV_Warning_WheelsNotTouching"), 5f).color = CommonWindowProperties.Message_Colour_Warning_User_Error;
 					return false;
 				}
 				if (wc.Operable < 3)
 				{
-					ScreenMessages.PostScreenMessage(Localizer.Format("#LOC_BV_Warning_WheelsNotOperable"), 5f).color = Color.yellow;
+					ScreenMessages.PostScreenMessage(Localizer.Format("#LOC_BV_Warning_WheelsNotOperable"), 5f).color = CommonWindowProperties.Message_Colour_Warning_User_Error;
 					return false;
 				}
 
 				// At least 2 wheels must be on
 				if (wc.OnLine < 2)
 				{
-					ScreenMessages.PostScreenMessage(Localizer.Format("#LOC_BV_Warning_WheelsNotOnline"), 5f).color = Color.yellow;
+					ScreenMessages.PostScreenMessage(Localizer.Format("#LOC_BV_Warning_WheelsNotOnline"), 5f).color = CommonWindowProperties.Message_Colour_Warning_User_Error;
 					return false;
 				}
 			}
@@ -436,7 +436,7 @@ namespace BonVoyage
 
                     if (iList[i].MaximumAmountAvailable == 0)
                     {
-                        ScreenMessages.PostScreenMessage(Localizer.Format("#LOC_BV_Warning_NotEnoughFuel"), 5f).color = Color.yellow;
+                        ScreenMessages.PostScreenMessage(Localizer.Format("#LOC_BV_Warning_NotEnoughFuel"), 5f).color = CommonWindowProperties.Message_Colour_Warning_User_Error;
                         return false;
                     }
                 }
@@ -445,7 +445,7 @@ namespace BonVoyage
 			// A SpeedReducion of 100% means we are kaput. No movement possible due no power available.
 			if (1 == this.SpeedReduction)
 			{
-				ScreenMessages.PostScreenMessage(Localizer.Format("#LOC_BV_Warning_LowPowerRover"), 5f).color = Color.yellow;
+				ScreenMessages.PostScreenMessage(Localizer.Format("#LOC_BV_Warning_LowPowerRover"), 5f).color = CommonWindowProperties.Message_Colour_Warning;
 				return false;
 			}
 
@@ -620,7 +620,7 @@ namespace BonVoyage
                         TimeWarp.SetRate(3, true);
                     if (TimeWarp.CurrentRate > 0) // Gradual drop out of warp
                         TimeWarp.SetRate(0, false);
-                    ScreenMessages.PostScreenMessage(vessel.vesselName + " " + Localizer.Format("#LOC_BV_Warning_Stopped") + ".", 5f).color = Color.red;
+                    ScreenMessages.PostScreenMessage(vessel.vesselName + " " + Localizer.Format("#LOC_BV_Warning_Stopped") + ".", 5f).color = CommonWindowProperties.Message_Colour_Warning;
                 }
 
 				if (!CheatOptions.InfiniteElectricity && this.batteries.PowerIsExhausted)

@@ -321,7 +321,7 @@ namespace BonVoyage
         {
             if (vessel.situation != Vessel.Situations.SPLASHED)
             {
-                ScreenMessages.PostScreenMessage(Localizer.Format("#LOC_BV_Warning_Splashed"), 5f).color = Color.yellow;
+                ScreenMessages.PostScreenMessage(Localizer.Format("#LOC_BV_Warning_Splashed"), 5f).color = CommonWindowProperties.Message_Colour_Warning;
                 return false;
             }
 
@@ -330,7 +330,7 @@ namespace BonVoyage
             // At least one engine must be on
             if (0 == ((EngineController)this.moveController).MaxThrust)
             {
-                ScreenMessages.PostScreenMessage(Localizer.Format("#LOC_BV_Warning_EnginesNotOnline"), 5f).color = Color.yellow;
+                ScreenMessages.PostScreenMessage(Localizer.Format("#LOC_BV_Warning_EnginesNotOnline"), 5f).color = CommonWindowProperties.Message_Colour_Warning_User_Error;
                 return false;
             }
 
@@ -338,7 +338,7 @@ namespace BonVoyage
             IResourceBroker broker = new ResourceBroker();
             if (!this.fuelCells.ProcessResources(broker))
             {
-                ScreenMessages.PostScreenMessage(Localizer.Format("#LOC_BV_Warning_NotEnoughFuel"), 5f).color = Color.yellow;
+                ScreenMessages.PostScreenMessage(Localizer.Format("#LOC_BV_Warning_NotEnoughFuel"), 5f).color = CommonWindowProperties.Message_Colour_Warning_User_Error;
                 return false;
             }
 
@@ -350,7 +350,7 @@ namespace BonVoyage
 
                 if (powerReduction > 0.75)
                 {
-                    ScreenMessages.PostScreenMessage(Localizer.Format("#LOC_BV_Warning_LowPowerShip"), 5f).color = Color.yellow;
+                    ScreenMessages.PostScreenMessage(Localizer.Format("#LOC_BV_Warning_LowPowerShip"), 5f).color = CommonWindowProperties.Message_Colour_Warning_User_Error;
                     return false;
                 }
             }
@@ -505,7 +505,7 @@ namespace BonVoyage
                         TimeWarp.SetRate(3, true);
                     if (TimeWarp.CurrentRate > 0) // Gradual drop out of warp
                         TimeWarp.SetRate(0, false);
-                    ScreenMessages.PostScreenMessage(vessel.vesselName + " " + Localizer.Format("#LOC_BV_Warning_Stopped") + ". " + Localizer.Format("#LOC_BV_Warning_NotEnoughFuel"), 5f).color = Color.red;
+                    ScreenMessages.PostScreenMessage(vessel.vesselName + " " + Localizer.Format("#LOC_BV_Warning_Stopped") + ". " + Localizer.Format("#LOC_BV_Warning_NotEnoughFuel"), 5f).color = CommonWindowProperties.Message_Colour_Warning_User_Error;
                 }
 
                 NotifyNotEnoughFuel();

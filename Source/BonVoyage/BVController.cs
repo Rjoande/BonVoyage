@@ -440,7 +440,7 @@ namespace BonVoyage
         {
             if (distanceToTarget == 0)
             {
-                ScreenMessages.PostScreenMessage(Localizer.Format("#LOC_BV_Warning_NoRoute", 5f)).color = Color.yellow;
+                ScreenMessages.PostScreenMessage(Localizer.Format("#LOC_BV_Warning_NoRoute", 5f)).color = CommonWindowProperties.Message_Colour_Warning_User_Error;
                 return false;
             }
 
@@ -509,7 +509,7 @@ namespace BonVoyage
             if (vessel.isActiveVessel)
             {
                 if (active)
-                    ScreenMessages.PostScreenMessage(Localizer.Format("#LOC_BV_AutopilotActive"), 10f).color = Color.red;
+                    ScreenMessages.PostScreenMessage(Localizer.Format("#LOC_BV_AutopilotActive"), 14f).color = CommonWindowProperties.Message_Colour_Confirm_Restrictions;
                 return;
             }
 
@@ -565,7 +565,7 @@ namespace BonVoyage
                 // CommNet
                 if (vessel.Connection.ControlState != CommNet.VesselControlState.ProbeFull)
                 {
-                    ScreenMessages.PostScreenMessage(Localizer.Format("#LOC_BV_Warning_NoConnection", 5f)).color = Color.red;
+                    ScreenMessages.PostScreenMessage(Localizer.Format("#LOC_BV_Warning_NoConnection", 5f)).color = CommonWindowProperties.Message_Colour_Warning;
                     return false;
                 }
 
@@ -574,7 +574,7 @@ namespace BonVoyage
                 {
                     if (RemoteTechWrapper.IsRemoteTechEnabled() && !RemoteTechWrapper.HasAnyConnection(vessel.id) && !RemoteTechWrapper.HasLocalControl(vessel.id))
                     {
-                        ScreenMessages.PostScreenMessage(Localizer.Format("#LOC_BV_Warning_NoConnection", 5f)).color = Color.red;
+                        ScreenMessages.PostScreenMessage(Localizer.Format("#LOC_BV_Warning_NoConnection", 5f)).color = CommonWindowProperties.Message_Colour_Warning;
                         return false;
                     }
                 }

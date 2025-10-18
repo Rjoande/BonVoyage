@@ -126,7 +126,7 @@ namespace BonVoyage
         {
             if (vessel.situation != Vessel.Situations.LANDED && vessel.situation != Vessel.Situations.SPLASHED)
             {
-                ScreenMessages.PostScreenMessage(Localizer.Format("#LOC_BV_Warning_Landed_Splashed"), 5f).color = Color.yellow;
+                ScreenMessages.PostScreenMessage(Localizer.Format("#LOC_BV_Warning_Landed_Splashed"), 5f).color = CommonWindowProperties.Message_Colour_Warning;
                 return false;
             }
 

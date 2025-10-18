@@ -94,6 +94,10 @@ namespace BonVoyage
         internal static UIStyle Style_Button_Bold_Yellow;
         internal static UIStyle Style_Button_Label;
 
+		internal static readonly Color Message_Colour_Confirm = Color.green;
+		internal static readonly Color Message_Colour_Confirm_Restrictions = Color.cyan;
+		internal static readonly Color Message_Colour_Warning = Color.yellow;
+		internal static readonly Color Message_Colour_Warning_User_Error = Color.red;
 
         /// <summary>
         /// Get sprite form texture

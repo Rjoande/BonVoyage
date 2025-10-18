@@ -169,7 +169,7 @@ namespace BonVoyage
                 }
             }
             else
-                ScreenMessages.PostScreenMessage(Localizer.Format("#LOC_BV_Warning_ControllerNotValid", 5f)).color = Color.yellow;
+                ScreenMessages.PostScreenMessage(Localizer.Format("#LOC_BV_Warning_ControllerNotValid", 5f)).color = CommonWindowProperties.Message_Colour_Warning;
         }
 
 
@@ -185,7 +185,7 @@ namespace BonVoyage
                 RefreshStatsListLayout();
             }
             else
-                ScreenMessages.PostScreenMessage(Localizer.Format("#LOC_BV_Warning_ControllerNotValid", 5f)).color = Color.yellow;
+                ScreenMessages.PostScreenMessage(Localizer.Format("#LOC_BV_Warning_ControllerNotValid", 5f)).color = CommonWindowProperties.Message_Colour_Warning;
         }
 
 
@@ -218,13 +218,13 @@ namespace BonVoyage
             {
                 if ((currentController.GetControllerType() == 0) && (currentController.vessel.situation != Vessel.Situations.LANDED && currentController.vessel.situation != Vessel.Situations.PRELAUNCH))
                 {
-                    ScreenMessages.PostScreenMessage(Localizer.Format("#LOC_BV_Warning_Landed", 5f)).color = Color.yellow;
+                    ScreenMessages.PostScreenMessage(Localizer.Format("#LOC_BV_Warning_Landed", 5f)).color = CommonWindowProperties.Message_Colour_Warning;
                     return;
                 }
 
                 if ((currentController.GetControllerType() == 1) && (currentController.vessel.situation != Vessel.Situations.SPLASHED))
                 {
-                    ScreenMessages.PostScreenMessage(Localizer.Format("#LOC_BV_Warning_Splashed", 5f)).color = Color.yellow;
+                    ScreenMessages.PostScreenMessage(Localizer.Format("#LOC_BV_Warning_Splashed", 5f)).color = CommonWindowProperties.Message_Colour_Warning;
                     return;
                 }
 
@@ -234,14 +234,14 @@ namespace BonVoyage
                 ScreenMessages.PostScreenMessage(Localizer.Format("#LOC_BV_FindingRoute", 5f));
                 if (currentController.FindRoute(latitude, longitude))
                 {
-                    ScreenMessages.PostScreenMessage(Localizer.Format("#LOC_BV_RouteFound", 5f));
+                    ScreenMessages.PostScreenMessage(Localizer.Format("#LOC_BV_RouteFound", 5f)).color = CommonWindowProperties.Message_Colour_Confirm;
                     RefreshStatsListLayout();
                 }
                 else
-                    ScreenMessages.PostScreenMessage(Localizer.Format("#LOC_BV_RouteNotFound", 5f));
+                    ScreenMessages.PostScreenMessage(Localizer.Format("#LOC_BV_RouteNotFound", 5f)).color = CommonWindowProperties.Message_Colour_Warning_User_Error;
             }
             else
-                ScreenMessages.PostScreenMessage(Localizer.Format("#LOC_BV_Warning_ControllerNotValid", 5f)).color = Color.yellow;
+                ScreenMessages.PostScreenMessage(Localizer.Format("#LOC_BV_Warning_ControllerNotValid", 5f)).color = CommonWindowProperties.Message_Colour_Warning;
         }
 
 
@@ -254,13 +254,13 @@ namespace BonVoyage
             {
                 if ((currentController.GetControllerType() == 0) && (currentController.vessel.situation != Vessel.Situations.LANDED && currentController.vessel.situation != Vessel.Situations.PRELAUNCH))
                 {
-                    ScreenMessages.PostScreenMessage(Localizer.Format("#LOC_BV_Warning_Landed", 5f)).color = Color.yellow;
+                    ScreenMessages.PostScreenMessage(Localizer.Format("#LOC_BV_Warning_Landed", 5f)).color = CommonWindowProperties.Message_Colour_Warning;
                     return;
                 }
 
                 if ((currentController.GetControllerType() == 1) && (currentController.vessel.situation != Vessel.Situations.SPLASHED))
                 {
-                    ScreenMessages.PostScreenMessage(Localizer.Format("#LOC_BV_Warning_Splashed", 5f)).color = Color.yellow;
+                    ScreenMessages.PostScreenMessage(Localizer.Format("#LOC_BV_Warning_Splashed", 5f)).color = CommonWindowProperties.Message_Colour_Warning;
                     return;
                 }
 
@@ -268,7 +268,7 @@ namespace BonVoyage
                 BonVoyage.Instance.MapMode = true;
             }
             else
-                ScreenMessages.PostScreenMessage(Localizer.Format("#LOC_BV_Warning_ControllerNotValid", 5f)).color = Color.yellow;
+                ScreenMessages.PostScreenMessage(Localizer.Format("#LOC_BV_Warning_ControllerNotValid", 5f)).color = CommonWindowProperties.Message_Colour_Warning;
         }
 
 
@@ -281,13 +281,13 @@ namespace BonVoyage
             {
                 if ((currentController.GetControllerType() == 0) && (currentController.vessel.situation != Vessel.Situations.LANDED && currentController.vessel.situation != Vessel.Situations.PRELAUNCH))
                 {
-                    ScreenMessages.PostScreenMessage(Localizer.Format("#LOC_BV_Warning_Landed", 5f)).color = Color.yellow;
+                    ScreenMessages.PostScreenMessage(Localizer.Format("#LOC_BV_Warning_Landed", 5f)).color = CommonWindowProperties.Message_Colour_Warning;
                     return;
                 }
 
                 if ((currentController.GetControllerType() == 1) && (currentController.vessel.situation != Vessel.Situations.SPLASHED))
                 {
-                    ScreenMessages.PostScreenMessage(Localizer.Format("#LOC_BV_Warning_Splashed", 5f)).color = Color.yellow;
+                    ScreenMessages.PostScreenMessage(Localizer.Format("#LOC_BV_Warning_Splashed", 5f)).color = CommonWindowProperties.Message_Colour_Warning;
                     return;
                 }
 
@@ -300,10 +300,10 @@ namespace BonVoyage
                     SetButtonClicked();
                 }
                 else
-                    ScreenMessages.PostScreenMessage(Localizer.Format("#LOC_BV_Warning_TargetNotValid", 5f)).color = Color.yellow;
+                    ScreenMessages.PostScreenMessage(Localizer.Format("#LOC_BV_Warning_TargetNotValid", 5f)).color = CommonWindowProperties.Message_Colour_Warning_User_Error;
             }
             else
-                ScreenMessages.PostScreenMessage(Localizer.Format("#LOC_BV_Warning_ControllerNotValid", 5f)).color = Color.yellow;
+                ScreenMessages.PostScreenMessage(Localizer.Format("#LOC_BV_Warning_ControllerNotValid", 5f)).color = CommonWindowProperties.Message_Colour_Warning;
         }
 
 
@@ -316,13 +316,13 @@ namespace BonVoyage
             {
                 if ((currentController.GetControllerType() == 0) && (currentController.vessel.situation != Vessel.Situations.LANDED && currentController.vessel.situation != Vessel.Situations.PRELAUNCH))
                 {
-                    ScreenMessages.PostScreenMessage(Localizer.Format("#LOC_BV_Warning_Landed", 5f)).color = Color.yellow;
+                    ScreenMessages.PostScreenMessage(Localizer.Format("#LOC_BV_Warning_Landed", 5f)).color = CommonWindowProperties.Message_Colour_Warning;
                     return;
                 }
 
                 if ((currentController.GetControllerType() == 1) && (currentController.vessel.situation != Vessel.Situations.SPLASHED))
                 {
-                    ScreenMessages.PostScreenMessage(Localizer.Format("#LOC_BV_Warning_Splashed", 5f)).color = Color.yellow;
+                    ScreenMessages.PostScreenMessage(Localizer.Format("#LOC_BV_Warning_Splashed", 5f)).color = CommonWindowProperties.Message_Colour_Warning;
                     return;
                 }
 
@@ -335,10 +335,10 @@ namespace BonVoyage
                     SetButtonClicked();
                 }
                 else
-                    ScreenMessages.PostScreenMessage(Localizer.Format("#LOC_BV_Warning_WaypointNotValid", 5f)).color = Color.yellow;
+                    ScreenMessages.PostScreenMessage(Localizer.Format("#LOC_BV_Warning_WaypointNotValid", 5f)).color = CommonWindowProperties.Message_Colour_Warning_User_Error;
             }
             else
-                ScreenMessages.PostScreenMessage(Localizer.Format("#LOC_BV_Warning_ControllerNotValid", 5f)).color = Color.yellow;
+                ScreenMessages.PostScreenMessage(Localizer.Format("#LOC_BV_Warning_ControllerNotValid", 5f)).color = CommonWindowProperties.Message_Colour_Warning;
         }
 
 
