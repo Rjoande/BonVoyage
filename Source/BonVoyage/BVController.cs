@@ -55,7 +55,7 @@ namespace BonVoyage
 	internal class DisplayedSystemCheckPercentResult : DisplayedSystemCheckWidget
 	{
 		internal Func<float> GetValue;
-		internal Callback<float> SelectedCallback;
+		internal UnityEngine.Events.UnityAction<float> SelectedCallback;
 	}
 
     /// <summary>

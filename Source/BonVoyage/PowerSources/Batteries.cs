@@ -26,7 +26,10 @@ namespace BonVoyage.PowerSources
     {
 		internal bool AllowNoGeneratedPower; // Allows rovering when there's no active source of EC.
         internal double MaxAvailableEC; // Max EC available from all activated batteries
+
 		internal double UseableECRatio = 0.5; // By default, we are using only half of max available EC;
+		internal string UseableECRatioAsText => ((int)(100*this.UseableECRatio)).ToString() + "%";
+
         internal double MaxUsedEC; // Max EC we can use
         internal double ECPerSecondConsumed; // EC per second consumed by wheels
         internal double ECPerSecondGenerated; // EC per second generated (generated power minus required power)

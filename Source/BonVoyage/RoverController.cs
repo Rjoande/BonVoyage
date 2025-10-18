@@ -171,18 +171,8 @@ namespace BonVoyage
 
 			result = new DisplayedSystemCheckWidget[] {
 				new DisplayedSystemCheckToggleResult {
-					Text = Localizer.Format("#LOC_BV_Control_UseSolarPanels"),
-					Tooltip = Localizer.Format("#LOC_BV_Control_UseSolarPanels_Tooltip"),
-					GetValue = GetUseSolarPanels,
-					SelectedCallback = UseSolarPanelsChanged
-				}
-			};
-			this.displayedSystemCheckWidgets.Add(result);
-
-			result = new DisplayedSystemCheckWidget[] {
-				new DisplayedSystemCheckToggleResult {
                     Text = Localizer.Format("#LOC_BV_Control_UseBatteries"),
-                    Tooltip = Localizer.Format("#LOC_BV_Control_UseBatteries_Tooltip", (this.batteries.UseableECRatio).ToString("P")),
+                    Tooltip = Localizer.Format("#LOC_BV_Control_UseBatteries_Tooltip", this.batteries.UseableECRatioAsText),
 					GetValue = GetUseBatteries,
 					SelectedCallback = UseBatteriesChanged
                 }
@@ -195,6 +185,26 @@ namespace BonVoyage
 					Tooltip = Localizer.Format("#LOC_BV_Control_UseBatteriesOnly_Tooltip"),
 					GetValue = GetUseBatteriesOnly,
 					SelectedCallback = UseBatteriesOnlyChanged
+				}
+			};
+			this.displayedSystemCheckWidgets.Add(result);
+
+			result = new DisplayedSystemCheckWidget[] {
+				new DisplayedSystemCheckPercentResult {
+					Label = Localizer.Format("#LOC_BV_Control_UseableECRatio"),
+					Tooltip = Localizer.Format("#LOC_BV_Control_UseableECRatio_Tooltip", this.batteries.UseableECRatioAsText),
+					GetValue = GetUseableECRatio,
+					SelectedCallback = UseUseableECRatioChanged
+				}
+			};
+			this.displayedSystemCheckWidgets.Add(result);
+
+			result = new DisplayedSystemCheckWidget[] {
+				new DisplayedSystemCheckToggleResult {
+					Text = Localizer.Format("#LOC_BV_Control_UseSolarPanels"),
+					Tooltip = Localizer.Format("#LOC_BV_Control_UseSolarPanels_Tooltip"),
+					GetValue = GetUseSolarPanels,
+					SelectedCallback = UseSolarPanelsChanged
 				}
 			};
 			this.displayedSystemCheckWidgets.Add(result);
@@ -710,9 +720,31 @@ namespace BonVoyage
             if (!value)
             {
 				this.batteries.AllowNoGeneratedPower = false;
+				if (this.batteries.UseableECRatio < 0.01)
+					this.batteries.UseableECRatio = 0.5;
                 fuelCells.Use = false;
             }
         }
+
+
+		/// <summary>
+		/// Return how much of the battery is allowed to be used.
+		/// </summary>
+		/// <returns></returns>
+		internal float GetUseableECRatio() => (float)(100d*this.batteries.UseableECRatio);
+
+
+		/// <summary>
+		/// Set how much of the battery is allowed to be used.
+		/// </summary>
+		/// <param name="value"></param>
+		internal void UseUseableECRatioChanged(float value)
+		{
+			this.batteries.UseableECRatio = (double)(value/100f);
+			this.batteries.Use = (value > 0);
+			if (!this.batteries.Use)
+				this.batteries.AllowNoGeneratedPower = false;
+		}
 
 
 		/// <summary>
@@ -732,6 +764,8 @@ namespace BonVoyage
 			if (value)
 			{
 				this.batteries.Use = true;
+				if (this.batteries.UseableECRatio < 0.01)
+					this.batteries.UseableECRatio = 0.5;
 				this.fuelCells.Use = false;
 				this.solarPower.Use = false;
 			}

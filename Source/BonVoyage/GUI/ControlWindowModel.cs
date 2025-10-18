@@ -364,6 +364,18 @@ namespace BonVoyage
 						new DialogGUIToggle(r.GetValue, r.Text, r.SelectedCallback)
 					);
 				}
+				else if (result[i] is DisplayedSystemCheckPercentResult)
+				{
+					row.AddChild(new DialogGUILabel(result[i].Label + ":", 100f));
+					DisplayedSystemCheckPercentResult r = result[i] as DisplayedSystemCheckPercentResult;
+					row.AddChild(
+						(result[i].Tooltip.Length > 0)
+						?
+						TooltipExtension.DeferTooltip(new DialogGUISlider(r.GetValue, 0f, 95f, true, 100f, 12f, r.SelectedCallback) { tooltipText = r.Tooltip })
+						:
+						new DialogGUISlider(r.GetValue, 0f, 95f, true, 100f, 8f, r.SelectedCallback)
+					);
+				}
                 else
                 {
                     row.AddChild(new DialogGUILabel(result[i].Label + ":", 100f));
