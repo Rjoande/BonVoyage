@@ -127,6 +127,28 @@ namespace BonVoyage
 			}
 		}
 
+		internal double EstimatedTimeOfArrival => this.RemainingDistanceToTarget / this.AverageSpeed;
+		internal string EstimatedTimeOfArrivalAsText
+		{
+			get
+			{
+				double eta = this.EstimatedTimeOfArrival;
+				if (double.IsNaN(eta) || double.IsInfinity(eta)) return "---";
+				TimeSpan ts = TimeSpan.FromSeconds(eta);
+				return ts.ToString(@"d\.hh\:mm\:ss");
+			}
+		}
+		internal string EstimatedTimeOfArrivalAsLongText
+		{
+			get
+			{
+				double eta = this.EstimatedTimeOfArrival;
+				if (double.IsNaN(eta) || double.IsInfinity(eta)) return "---";
+				TimeSpan ts = TimeSpan.FromSeconds(eta);
+				return Localizer.Format("#LOC_BV_Control_ETA_Tooltip", ts.Days, ts.Hours, ts.Minutes, ts.Seconds);
+			}
+		}
+
 		internal event EventHandler OnStateChanged;
 
         internal double electricPower_Solar; // Electric power from solar panels
@@ -333,6 +355,15 @@ namespace BonVoyage
                     Tooltip = ""
                 }
             };
+			this.displayedSystemCheckWidgets.Add(result);
+
+			result = new DisplayedSystemCheckWidget[] {
+				new DisplayedSystemCheckWidget {
+					Label = Localizer.Format("#LOC_BV_Control_ETA"),
+					Text = this.EstimatedTimeOfArrivalAsText,
+					Tooltip = this.EstimatedTimeOfArrivalAsLongText
+				}
+			};
 			this.displayedSystemCheckWidgets.Add(result);
 
 			return this.displayedSystemCheckWidgets;

@@ -168,6 +168,18 @@ namespace BonVoyage
         }
 
 
+		/// <summary>
+		/// Get the E.T.A (Estimate Time of Arrival)
+		/// </summary>
+		/// <param name="controllerIndex"></param>
+		/// <returns></returns>
+		private string GetETA(BVController controller)
+		{
+			if (controller == null) return "---";
+			return controller.EstimatedTimeOfArrivalAsText;
+		}
+
+
         /// <summary>
         /// Get distance to a target of a vessel based on the index in list of controllers
         /// </summary>
@@ -225,6 +237,8 @@ namespace BonVoyage
                     new DialogGUISpace(10f),
                     new DialogGUILabel(delegate { return GetDistanceToTarget(controller); }, 90f) { guiStyle = CommonWindowProperties.Style_Label_Normal_Center },
                     new DialogGUISpace(10f),
+					new DialogGUILabel(delegate { return this.GetETA(controller); }, 60f) { guiStyle = CommonWindowProperties.Style_Label_Normal_Center },
+					new DialogGUISpace(10f),
                     (
                         !controller.vessel.isActiveVessel
                         ?

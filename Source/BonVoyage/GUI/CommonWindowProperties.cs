@@ -39,7 +39,7 @@ namespace BonVoyage
         internal static RectOffset mainElementPadding = new RectOffset(5, 5, 10, 10);
         internal const float mainWindowSpacing = 3f;
         internal static RectOffset mainListPadding = new RectOffset(4, 4, 3, 3);
-        internal const float mainListMinWidth = 570f;
+        internal const float mainListMinWidth = 644f;
         internal const float mainListMinHeight = 100f;
         internal const float mainWindowWidth = mainListMinWidth + 20f;
         internal const float mainWindowHeight = mainListMinHeight + 330f;

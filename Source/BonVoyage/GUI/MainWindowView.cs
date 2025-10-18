@@ -74,7 +74,9 @@ namespace BonVoyage
                 new DialogGUISpace(10f),
                 new DialogGUILabel(Localizer.Format("#LOC_BV_ColumnHeader_Speed"), 60f) { guiStyle = CommonWindowProperties.Style_Label_Bold_Center },
                 new DialogGUISpace(10f),
-                new DialogGUILabel(Localizer.Format("#LOC_BV_ColumnHeader_Distance"), 90f) { guiStyle = CommonWindowProperties.Style_Label_Bold_Center }
+                new DialogGUILabel(Localizer.Format("#LOC_BV_ColumnHeader_Distance"), 90f) { guiStyle = CommonWindowProperties.Style_Label_Bold_Center },
+                new DialogGUISpace(10f),
+                new DialogGUILabel(Localizer.Format("#LOC_BV_ColumnHeader_ETA"), 60f) { guiStyle = CommonWindowProperties.Style_Label_Bold_Center }
             ));
 
             AddChild(new DialogGUIScrollList(new Vector2(CommonWindowProperties.mainListMinWidth, CommonWindowProperties.mainListMinHeight + 220), false, true, model.GetVesselListLayout()));
