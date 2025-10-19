@@ -17,6 +17,8 @@
 */
 
 
+using System;
+
 namespace BonVoyage
 {
     class BonVoyageScenario : ScenarioModule
@@ -73,6 +75,10 @@ namespace BonVoyage
                 ConfigNode controllerNode = new ConfigNode("CONTROLLER");
                 controllerNode.AddValue("vesselId", controller.vessel.id);
 
+				controllerNode.AddValue("electricPower_Solar", controller.electricPower_Solar);
+				controllerNode.AddValue("electricPower_Other", controller.electricPower_Other);
+				controllerNode.AddValue("requiredPower", controller.requiredPower);
+
 				controller.solarPower.Write(controllerNode);
 				controller.batteries.Write(controllerNode);
 				controller.fuelCells.Write(controllerNode);
@@ -97,6 +103,10 @@ namespace BonVoyage
                     ConfigNode controllerNode = scenarioNode.GetNode("CONTROLLER", "vesselId", controller.vessel.id.ToString());
                     if (controllerNode != null)
                     {
+						controller.electricPower_Solar = Convert.ToDouble(controllerNode.GetValue("electricPower_Solar") ?? "0");
+						controller.electricPower_Other = Convert.ToDouble(controllerNode.GetValue("electricPower_Other") ?? "0");
+						controller.requiredPower = Convert.ToDouble(controllerNode.GetValue("requiredPower") ?? "0");
+
 						controller.solarPower.Read(controllerNode);
 						controller.batteries.Read(controllerNode);
 						controller.fuelCells.Read(controllerNode);
