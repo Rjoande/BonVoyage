@@ -63,11 +63,11 @@ namespace BonVoyage
 				double speedReduction = 0;
 				if (this.batteries.AllowNoGeneratedPower)
 				{
-					double nightLenght = this.vessel.mainBody.rotationPeriod / 2; // half a day in seconds;
+					double nightLength = this.vessel.mainBody.rotationPeriod / 2; // half a day in seconds;
 					double timeToTarget = this.RemainingDistanceToTarget / this.AverageSpeed;
-					if (nightLenght > timeToTarget)
+					if (nightLength > timeToTarget)
 					{
-						double totalEc = this.batteries.ECPerSecondConsumed * nightLenght; // Total energy consumed by a whole night driving.
+						double totalEc = this.batteries.ECPerSecondConsumed * nightLength; // Total energy consumed by a whole night driving.
 						speedReduction = this.batteries.MaxUsedEC / totalEc;
 					}
 					// else Go full throttle, baby!
@@ -482,16 +482,18 @@ namespace BonVoyage
         {
 			this.calcCurrentSituation();
 
-            // Speed penalties at twighlight and at night
-            if ((angle > 90) && manned) // night
-                speedMultiplier = 0.25;
-            else if ((angle > 85) && manned) // twilight
-                speedMultiplier = 0.5;
-            else if ((angle > 80) && manned) // twilight
-                speedMultiplier = 0.75;
-            else // day
-                speedMultiplier = 1.0;
-
+			// Speed penalties at twighlight and at night if not in Only-Battery mode
+			if (!this.batteries.AllowNoGeneratedPower)
+            {
+				if ((angle > 90) && manned) // night
+					speedMultiplier = 0.25;
+				else if ((angle > 85) && manned) // twilight
+					speedMultiplier = 0.5;
+				else if ((angle > 80) && manned) // twilight
+					speedMultiplier = 0.75;
+				else // day
+					speedMultiplier = 1.0;
+			}
             double deltaT = currentTime - lastTimeUpdated; // Time delta from the last update
             double deltaTOver = 0; // deltaT which is calculated from a value over the maximum resource amout available
 
