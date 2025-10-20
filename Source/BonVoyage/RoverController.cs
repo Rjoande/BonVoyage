@@ -483,6 +483,7 @@ namespace BonVoyage
 			this.calcCurrentSituation();
 
 			// Speed penalties at twighlight and at night if not in Only-Battery mode
+			this.speedMultiplier = 1.0; // day or Only-Battery mode.
 			if (!this.batteries.AllowNoGeneratedPower)
             {
 				if ((angle > 90) && manned) // night
@@ -491,8 +492,6 @@ namespace BonVoyage
 					speedMultiplier = 0.5;
 				else if ((angle > 80) && manned) // twilight
 					speedMultiplier = 0.75;
-				else // day
-					speedMultiplier = 1.0;
 			}
             double deltaT = currentTime - lastTimeUpdated; // Time delta from the last update
             double deltaTOver = 0; // deltaT which is calculated from a value over the maximum resource amout available
