@@ -298,6 +298,7 @@ namespace BonVoyage
         /// </summary>
         void OnGUI()
         {
+			if (null == BonVoyage.Instance) return;
             if (BonVoyage.Instance.GamePaused && !BonVoyage.Instance.ShowUI)
                 return;
 
