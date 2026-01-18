@@ -117,6 +117,7 @@
     <Compile Include="PowerSources\ElectricityPoweredConverter.cs" />
     <Compile Include="PowerSources\PropellantPoweredConverter.cs" />
     <Compile Include="PowerSources\PowerSupply.cs" />
+    <Compile Include="PowerSources\Dummy.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Properties\Version.tt">
