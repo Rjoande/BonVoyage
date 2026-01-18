@@ -209,12 +209,17 @@ namespace BonVoyage
         {
             vessel = v;
             BVModule = module;
-			angle = 0;
-
-			this.displayedSystemCheckWidgets.Clear();
 
 			this.fuelCells = fuelCellPowerSource;
 			this.solarPower = solarPowerSource;
+
+			this.init();
+        }
+
+		private void init()
+		{
+			this.angle = 0;
+			this.displayedSystemCheckWidgets.Clear();
 
             // Load values from config if it isn't the first run of the mod (we are reseting vessel on the first run)
             if (!Configuration.FirstRun)

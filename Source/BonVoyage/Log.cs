@@ -14,6 +14,7 @@
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 */
 using System;
+using System.Diagnostics;
 
 namespace BonVoyage
 {
@@ -22,6 +23,14 @@ namespace BonVoyage
 		internal static void force(string msg, params object[] @params)
 		{
 			UnityEngine.Debug.LogFormat("[BonVoyage] " + msg, @params);
+		}
+
+		internal static void err(string msg, params object[] @params)
+		{
+			UnityEngine.Debug.LogErrorFormat("[BonVoyage] " + msg, @params);
+			StackTrace stacktrace = new StackTrace();
+			string stackdump = stacktrace.ToString();
+			UnityEngine.Debug.LogError("[BonVoyage] " + stackdump);
 		}
 
 #if DEBUG
