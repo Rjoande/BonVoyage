@@ -157,7 +157,7 @@ namespace BonVoyage
         internal double requiredPower; // Power required by wheels and engines
         internal readonly Batteries batteries = new Batteries(); // Information about batteries
         internal readonly Converter fuelCells;      // Information about fuel cells
-		internal readonly SolarPower solarPower;    // Information about solar panels
+		internal readonly PowerSupply solarPower;    // Information about solar panels
 
         #endregion
 

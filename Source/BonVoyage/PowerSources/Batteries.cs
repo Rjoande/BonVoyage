@@ -38,7 +38,7 @@ namespace BonVoyage.PowerSources
 		internal override bool PowerIsAvailable => this.Use && (this.CurrentEC > 0.1);
 		internal override bool PowerIsExhausted => this.Use && this.CurrentEC <= 0.1;
 
-		internal void Read(ConfigNode controllerNode)
+		internal override void Read(ConfigNode controllerNode)
 		{
 			ConfigNode subNode = controllerNode.GetNode("BATTERIES");
 			if (null == subNode) return;
@@ -52,7 +52,7 @@ namespace BonVoyage.PowerSources
 			this.CurrentEC = Convert.ToDouble(subNode.GetValue("currentEC"));
 		}
 
-		internal void Write(ConfigNode controllerNode)
+		internal override void Write(ConfigNode controllerNode)
 		{
 			ConfigNode subNode = new ConfigNode("BATTERIES");
 
@@ -66,5 +66,7 @@ namespace BonVoyage.PowerSources
 
 			controllerNode.AddNode(subNode);
 		}
+
+		internal override double GetAvailablePower() => this.CurrentEC;
 	}
 }

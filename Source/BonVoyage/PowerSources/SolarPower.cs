@@ -32,14 +32,11 @@ namespace BonVoyage.PowerSources
 			this.vessel = vessel;
 		}
 
-		internal abstract void Read(ConfigNode subNode);
-		internal abstract void Write(ConfigNode controllerNode);
-
 		/// <summary>
 		/// Calculate available power from solar panels
 		/// </summary>
 		/// <returns></returns>
-		internal double GetAvailablePower() => this.calculateAvailablePower();
+		internal override double GetAvailablePower() => this.calculateAvailablePower();
 
 		protected abstract double calculateAvailablePower();
 	}

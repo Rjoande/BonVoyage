@@ -21,7 +21,11 @@ namespace BonVoyage.PowerSources
 	{
 		internal bool Use; // Use batteries during a night
 
+		internal abstract void Read(ConfigNode controllerNode);
+		internal abstract void Write(ConfigNode controllerNode);
+
 		internal abstract bool PowerIsAvailable {  get ; }
 		internal abstract bool PowerIsExhausted {  get ; }
+		internal abstract double GetAvailablePower();
 	}
 }
