@@ -1,6 +1,6 @@
 ﻿/*
 	This file is part of Bon Voyage /L
-		© 2024-2025 LisiasT : http://lisias.net <support@lisias.net>
+		© 2024-2026 LisiasT : http://lisias.net <support@lisias.net>
 		© 2018-2024 Maja
 		© 2016-2018 RealGecko
 
@@ -21,7 +21,7 @@ namespace BonVoyage
 	public static class LegalMamboJambo
 	{
 		public const string Company = "L Aerospace/KSP Division";
-		public const string Copyright = "Copyright © 2024-2025 LisiasT";
+		public const string Copyright = "Copyright © 2024-2026 LisiasT";
 		public const string Product = "Bon Voyage /L";
 		public const string Trademark = "BonVoyage™ by RealGecko, maja, LisiasT; Bon Voyage /L™ by LisiasT; /L™ by LisiasT";
 	}
