@@ -201,14 +201,14 @@ namespace BonVoyage
 
 
 		/**
-		 * Some idiot us monkey patching me, and since he did a lousy job on his Harmony Patch, it causes a failure that
-		 * ended up being attributed to me.
+		 * Some technically challenged individual is monkey patching me, and since he did a lousy job on his Harmony Patch,
+		 * it causes a failure that ended up being attributed to me.
 		 * 
 		 * This is my attempt to push back the blame where it belongs.
 		 */
 		protected BVController(Vessel v, ConfigNode module)
 		{
-			Log.err("This constructor is not supported, you really should be seeing this. The stack dump below, hopefully, will help on diagnosing the problem.");
+			Log.err("This constructor is not supported, you really should not be seeing this. The stack dump below, hopefully, will help on diagnosing the problem.");
 			this.vessel = v;
 			this.BVModule = module;
 			this.displayedSystemCheckWidgets.Clear();
