@@ -269,17 +269,23 @@ namespace BonVoyage
 				if (!manned)    // Unmanned rovers drive with the speed penalty based on available tech
 					throttleCap -= this.GetUnmannedSpeedPenalty();
 
-				double dragCap = 0;
+				this.moveController.Check(throttleCap);
+				double dragCap;
 				{
 					// Compute max speed - based on the drag equation
-					double Z = (density0 / (0.5 * vessel.mainBody.atmDensityASL + 0.5 * vessel.mainBody.oceanDensity)) * (mass0 / vessel.GetTotalMass()) * (((EngineController)this.moveController).MaxThrust / thrust0);
+					double maxThrust = (((EngineController)this.moveController).MaxThrust / thrust0);
+					double Z = (density0 / (0.5 * vessel.mainBody.atmDensityASL + 0.5 * vessel.mainBody.oceanDensity)) * (mass0 / vessel.GetTotalMass()) * maxThrust;
 					double maxSpeedBase = Math.Sqrt(Z) * speed0;
+    				Log.dbg("Compute max speed: speed0={0}, maxThrust={1}, Z={2}, maxSpeedBase={3}", speed0, maxThrust, Z, maxSpeedBase);
+					dragCap = maxSpeedBase/speed0;
 					if (maxSpeedBase > speed0) // We are over max allowed speed, then we need to decrease max available thrust
 						dragCap = (speed0 / maxSpeedBase);
 				}
 
 				// Throttle
 				requiredPower = ((EngineController)this.moveController).MaxThrust * throttleCap;
+
+				Log.dbg("throttleCap: {0}; dragCap:{1}; requiredPower:{2}", throttleCap, dragCap, requiredPower);
 
 				// If required power is greater then total power generated, then average speed can be lowered up to 87% (square root of (1 - powerReduction))
 				if (this.requiredPower > this.electricPower)

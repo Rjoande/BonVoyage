@@ -37,6 +37,8 @@ namespace BonVoyage.MovementControllers
 				this.maxThrustSum = maxThrustSum;
 				this.powerRequired = powerRequired;
 			}
+
+			public override string ToString() => string.Format("EngineTestResult maxThrustSum={0}; powerRequired={1}", maxThrustSum, powerRequired);
 		}
 
 		private EngineTestResult engineTestResult = new EngineTestResult();		// Result of a test of engines
@@ -52,7 +54,9 @@ namespace BonVoyage.MovementControllers
 
 			// Test engines and rotors
 			EngineTestResult testResultStockEngines = CheckStockEngines();
+			Log.dbg("testResultStockEngines : {0}", testResultStockEngines.ToString());
 			EngineTestResult testResultBGRotors = CheckBGRotors();
+			Log.dbg("testResultBGRotors : {0}", testResultBGRotors.ToString());
 
 			// Sum it
 			this.engineTestResult.maxThrustSum = testResultStockEngines.maxThrustSum + testResultBGRotors.maxThrustSum;
