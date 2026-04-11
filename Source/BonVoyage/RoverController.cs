@@ -257,7 +257,7 @@ namespace BonVoyage
             else
                 batteries.MaxAvailableEC = 0;
 
-            electricPower_Other += fuelCells.OutputValue;
+            electricPower_Other += fuelEnergy.OutputValue;
 
             // Cheats
             if (CheatOptions.InfiniteElectricity)
@@ -352,7 +352,7 @@ namespace BonVoyage
 
 				// Average speed will vary depending on number of wheels online and crew present from 50 to 95 percent of average wheels' max speed
 				this.moveController.Check(throttleCap);
-				this.fuelCells.Check(throttleCap);
+				this.fuelEnergy.Check(throttleCap);
 			}
 
 			// Base average speed at night is the same as average speed, if there is other power source. Zero otherwise.
@@ -426,10 +426,10 @@ namespace BonVoyage
 			}
 
             // Get fuel amount if fuel cells are used
-            if (fuelCells.Use && !CheatOptions.InfinitePropellant)
+            if (fuelEnergy.Use && !CheatOptions.InfinitePropellant)
             {
                 IResourceBroker broker = new ResourceBroker();
-				List<Resource> iList = fuelCells.InputResources;
+				List<Resource> iList = fuelEnergy.InputResources;
                 for (int i = 0; i < iList.Count; ++i)
                 {
                     iList[i].MaximumAmountAvailable = broker.AmountAvailable(vessel.rootPart, iList[i].Name, 1, ResourceFlowMode.ALL_VESSEL);
@@ -501,13 +501,13 @@ namespace BonVoyage
             {
                 // Process fuel cells before batteries
                 if (!CheatOptions.InfinitePropellant 
-                    && fuelCells.Use 
+                    && fuelEnergy.Use 
                     && (this.IsNight
-                        || (batteries.ECPerSecondGenerated - fuelCells.OutputValue <= 0)
+                        || (batteries.ECPerSecondGenerated - fuelEnergy.OutputValue <= 0)
                         || (batteries.CurrentEC < batteries.MaxUsedEC))) // Night, not enough solar power or we need to recharge batteries
                 {
                     if (!(this.IsNight && (batteries.CurrentEC == 0))) // Don't use fuel cells, if it's night and current EC of batteries is zero. This means, that there isn't enough power to recharge them and fuel is wasted.
-                        this.fuelCells.Update(ref deltaT, ref deltaTOver);
+                        this.fuelEnergy.Update(ref deltaT, ref deltaTOver);
                 }
 
 				if (this.IsDay) // day
@@ -721,7 +721,7 @@ namespace BonVoyage
 				this.batteries.AllowNoGeneratedPower = false;
 				if (this.batteries.UseableECRatio < 0.01)
 					this.batteries.UseableECRatio = 0.5;
-                fuelCells.Use = false;
+                fuelEnergy.Use = false;
             }
         }
 
@@ -765,7 +765,7 @@ namespace BonVoyage
 				this.batteries.Use = true;
 				if (this.batteries.UseableECRatio < 0.01)
 					this.batteries.UseableECRatio = 0.5;
-				this.fuelCells.Use = false;
+				this.fuelEnergy.Use = false;
 				this.solarPower.Use = false;
 			}
 		}
@@ -777,7 +777,7 @@ namespace BonVoyage
 		/// <returns></returns>
 		internal bool GetUseFuelCells()
         {
-            return fuelCells.Use;
+            return fuelEnergy.Use;
         }
 
 
@@ -787,7 +787,7 @@ namespace BonVoyage
         /// <param name="value"></param>
         internal void UseFuelCellsChanged(bool value)
         {
-            fuelCells.Use = value;
+            fuelEnergy.Use = value;
             if (value)
 			{
 				this.batteries.Use = true;

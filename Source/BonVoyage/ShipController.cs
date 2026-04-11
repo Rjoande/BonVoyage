@@ -81,11 +81,11 @@ namespace BonVoyage
 		internal static BVController Create(Vessel vessel, ConfigNode moduleConfigNode)
 		{
 			// TODO: To intantiate the proper PowerSources for the current Installation!
-			Converter fuelCellPowerSource = new PropellantPoweredConverter(vessel);
+			Converter propellantPowerSource = new PropellantPoweredConverter(vessel);
 			SolarPower solarPowerSource = new StockSolarPower(vessel);
 			Controller moveController = new EngineController(vessel, moduleConfigNode);
 
-			return new ShipController(vessel, moduleConfigNode, fuelCellPowerSource, solarPowerSource, moveController);
+			return new ShipController(vessel, moduleConfigNode, propellantPowerSource, solarPowerSource, moveController);
 		}
 		protected ShipController(Vessel v, ConfigNode module, Converter fuelCellPowerSource, SolarPower solarPowerSource, Controller moveController) : base(v, module, fuelCellPowerSource, solarPowerSource)
         {
@@ -289,8 +289,8 @@ namespace BonVoyage
 						throttleCap *= (1 - powerReduction);
 				}
 
-				this.moveController.Check(throttleCap*dragCap);
-				this.fuelCells.Check(throttleCap);
+				this.moveController.Check(throttleCap*dragCap); // FIXME: We already did a full Check above. Would be nice to reuse that calculationts, uh?
+				this.fuelEnergy.Check(throttleCap);
 			}
 
             // Cheats
@@ -336,7 +336,7 @@ namespace BonVoyage
 
             // Get fuel amount
             IResourceBroker broker = new ResourceBroker();
-            if (!this.fuelCells.ProcessResources(broker))
+            if (!this.fuelEnergy.ProcessResources(broker))
             {
                 ScreenMessages.PostScreenMessage(Localizer.Format("#LOC_BV_Warning_NotEnoughFuel"), 5f).color = CommonWindowProperties.Message_Colour_Warning_User_Error;
                 return false;
@@ -407,7 +407,7 @@ namespace BonVoyage
             }
 
             if (!CheatOptions.InfinitePropellant)
-				this.fuelCells.Update(ref deltaT, ref deltaTOver);
+				this.fuelEnergy.Update(ref deltaT, ref deltaTOver);
 
             double deltaS = AverageSpeed * deltaT; // Distance delta from the last update
             distanceTravelled += deltaS;

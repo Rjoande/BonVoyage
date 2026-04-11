@@ -156,7 +156,7 @@ namespace BonVoyage
 		internal double electricPower => this.electricPower_Solar + this.electricPower_Other;
         internal double requiredPower; // Power required by wheels and engines
         internal readonly Batteries batteries = new Batteries(); // Information about batteries
-        internal readonly Converter fuelCells;      // Information about fuel cells
+        internal readonly Converter fuelEnergy;      // Information about fuel cells or propellant engines.
 		internal readonly PowerSupply solarPower;    // Information about solar panels
 
         #endregion
@@ -213,7 +213,7 @@ namespace BonVoyage
 			this.BVModule = module;
 			this.displayedSystemCheckWidgets.Clear();
 
-			this.fuelCells = new Dummy.Converter(this.vessel);
+			this.fuelEnergy = new Dummy.Converter(this.vessel);
 			this.solarPower = new Dummy.PowerSupply();
 
 			this.init();
@@ -229,7 +229,7 @@ namespace BonVoyage
             vessel = v;
             BVModule = module;
 
-			this.fuelCells = fuelCellPowerSource;
+			this.fuelEnergy = fuelCellPowerSource;
 			this.solarPower = solarPowerSource;
 
 			this.init();
@@ -453,7 +453,7 @@ namespace BonVoyage
 
             // Get power production
 			this.electricPower_Solar = this.solarPower.GetAvailablePower();
-			this.electricPower_Other = this.fuelCells.GetAvailablePower();
+			this.electricPower_Other = this.fuelEnergy.GetAvailablePower();
         }
 
 
@@ -618,7 +618,7 @@ namespace BonVoyage
 
             IResourceBroker broker = new ResourceBroker();
 
-            this.fuelCells.ProcessResources(broker);
+            this.fuelEnergy.ProcessResources(broker);
         }
 
 

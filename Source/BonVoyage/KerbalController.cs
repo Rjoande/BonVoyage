@@ -113,7 +113,7 @@ namespace BonVoyage
         internal override void SystemCheck()
         {
             base.SystemCheck();
-			this.fuelCells.Check(100);
+			this.fuelEnergy.Check(100);
 			this.moveController.Check(100);
 			this.calcCurrentSituation();
         }
@@ -163,7 +163,7 @@ namespace BonVoyage
             double deltaT = currentTime - lastTimeUpdated; // Time delta from the last update
             double deltaTOver = 0; // deltaT which is calculated from a value over the maximum resource amout available
 
-            this.fuelCells.Update(ref deltaT, ref deltaTOver);
+            this.fuelEnergy.Update(ref deltaT, ref deltaTOver);
 
             double deltaS = AverageSpeed * deltaT; // Distance delta from the last update
             distanceTravelled += deltaS;

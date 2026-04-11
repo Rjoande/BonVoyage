@@ -81,7 +81,7 @@ namespace BonVoyage
 
 				controller.solarPower.Write(controllerNode);
 				controller.batteries.Write(controllerNode);
-				controller.fuelCells.Write(controllerNode);
+				controller.fuelEnergy.Write(controllerNode);
 
                 gameNode.AddNode(controllerNode);
             }
@@ -109,7 +109,7 @@ namespace BonVoyage
 
 						controller.solarPower.Read(controllerNode);
 						controller.batteries.Read(controllerNode);
-						controller.fuelCells.Read(controllerNode);
+						controller.fuelEnergy.Read(controllerNode);
                     }
                 }
             }
