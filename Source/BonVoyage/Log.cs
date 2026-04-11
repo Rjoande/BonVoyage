@@ -33,11 +33,16 @@ namespace BonVoyage
 			UnityEngine.Debug.LogError("[BonVoyage] " + stackdump);
 		}
 
-#if DEBUG
+		[ConditionalAttribute("DEBUG")]
+		internal static void dbg(string msg, params object[] @params)
+		{
+			UnityEngine.Debug.LogFormat("[BonVoyage] " + msg, @params);
+		}
+
+		[ConditionalAttribute("DEBUG")]
 		internal static void dbg(Exception e)
 		{
 			UnityEngine.Debug.LogException(e);
 		}
-#endif
 	}
 }

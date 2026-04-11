@@ -90,9 +90,7 @@ namespace BonVoyage.PowerSources
 				}
 				catch (Exception e)
 				{
-#if DEBUG
 					Log.dbg(e);
-#endif
 				}
 
 				if (ecRatio > 0)

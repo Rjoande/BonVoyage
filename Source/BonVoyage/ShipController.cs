@@ -484,9 +484,7 @@ namespace BonVoyage
                 }
 				catch (Exception e)
 				{
-#if DEBUG
 					Log.dbg(e);
-#endif
 				}
             }
 
