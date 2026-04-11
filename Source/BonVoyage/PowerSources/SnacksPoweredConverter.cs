@@ -32,6 +32,7 @@ namespace BonVoyage.PowerSources
 
 		internal override double GetAvailablePower() => 0;
 
+		internal override bool CheckResources(IResourceBroker broker) => true;
 		internal override bool ProcessResources(IResourceBroker broker) => true;
 		internal override void Update(ref double deltaT, ref double deltaTOver) { }
 		internal override void Read(ConfigNode subNode) { }

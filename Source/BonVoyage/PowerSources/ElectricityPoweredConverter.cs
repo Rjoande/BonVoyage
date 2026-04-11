@@ -224,6 +224,7 @@ namespace BonVoyage.PowerSources
 			}
 		}
 
+		internal override bool CheckResources(IResourceBroker broker) => true;
 		internal override bool ProcessResources(IResourceBroker broker)
 		{
 			if (this.Use)

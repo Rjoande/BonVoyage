@@ -28,6 +28,7 @@ namespace BonVoyage.PowerSources
 			internal Converter(Vessel vessel) : base(vessel) { }
 			internal override void Check(double throttle) { }
 			internal override double GetAvailablePower() => 0.0d;
+			internal override bool CheckResources(IResourceBroker broker) => false;
 			internal override bool ProcessResources(IResourceBroker broker) => false;
 			internal override void Update(ref double deltaT, ref double deltaTOver) { }
 			internal override void Read(ConfigNode controllerNode) { }

@@ -92,6 +92,9 @@ namespace BonVoyage.PowerSources
 		/// <returns>returns true if enough resources available, otherwise false (halting the processing)</returns>
 		internal abstract bool ProcessResources(IResourceBroker broker);
 
+		// Check if there're resources available to be used - same as Processs, but without consuption.
+		internal abstract bool CheckResources(IResourceBroker broker);
+
 		internal abstract void Update(ref double deltaT, ref double deltaTOver);
 	}
 }

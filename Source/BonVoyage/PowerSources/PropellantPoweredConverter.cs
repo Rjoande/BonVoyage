@@ -214,6 +214,20 @@ namespace BonVoyage.PowerSources
 			}
 		}
 
+		internal override bool CheckResources(IResourceBroker broker)
+		{
+			base.ProcessResources(broker);
+			Log.dbg("CheckResources {0} found propellants", this.propellants.Count);
+			for (int i = 0; i < this.propellants.Count; ++i)
+			{
+				Fuel p = this.propellants[i];
+				Log.dbg("CheckResources {0} {1}", p.Name, p.MaximumAmountAvailable);
+				if (p.MaximumAmountAvailable < 1) return false;
+			}
+
+			return true;
+		}
+
 		internal override bool ProcessResources(IResourceBroker broker)
 		{
 			base.ProcessResources(broker);
