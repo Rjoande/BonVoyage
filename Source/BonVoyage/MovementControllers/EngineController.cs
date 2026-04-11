@@ -87,13 +87,16 @@ namespace BonVoyage.MovementControllers
 			double powerRequired = 0;
 			double maxThrustSum = 0;
 
-			// Get jet engines' modules
+			// Get jet engines' modules (and also rocket, saving a loop)
 			List<Part> jets = new List<Part>();
+			List<Part> rockets = new List<Part>();
 			for (int i = 0; i < vessel.parts.Count; ++i)
 			{
 				Part part = vessel.parts[i];
 				if (part.Modules.Contains("ModuleEnginesFX"))
 					jets.Add(part);
+				if (part.Modules.Contains("ModuleEngines"))
+					rockets.Add(part);
 			}
 
 			for (int i = 0; i < jets.Count; ++i)
@@ -124,15 +127,6 @@ namespace BonVoyage.MovementControllers
 						}
 					}
 				}
-			}
-
-			// Get rocket engines' modules
-			List<Part> rockets = new List<Part>();
-			for (int i = 0; i < vessel.parts.Count; ++i)
-			{
-				Part part = vessel.parts[i];
-				if (part.Modules.Contains("ModuleEngines"))
-					rockets.Add(part);
 			}
 
 			for (int i = 0; i < rockets.Count; ++i)
