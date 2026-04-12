@@ -342,14 +342,14 @@ namespace BonVoyage
 
             // Get fuel amount
             IResourceBroker broker = new ResourceBroker();
-            if (!this.fuelEnergy.CheckResources(broker))
+            if (false && !this.fuelEnergy.CheckResources(broker))
             {
                 ScreenMessages.PostScreenMessage(Localizer.Format("#LOC_BV_Warning_NotEnoughFuel"), 5f).color = CommonWindowProperties.Message_Colour_Warning_User_Error;
                 return false;
             }
 
             // Power production
-			if (this.requiredPower > this.electricPower)
+			if (false && this.requiredPower > this.electricPower)
             {
                 // If required power is greater than total power generated, then average speed can be lowered up to 87% (square root of (1 - powerReduction))
 				double powerReduction = (this.requiredPower - this.electricPower) / this.requiredPower;
