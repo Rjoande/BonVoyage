@@ -68,6 +68,7 @@ namespace BonVoyage
         internal Vessel vessel; // Vessel containing BonVoyageModule
 		protected Vector3d vesselPos;
 		protected double angle; // Angle between the main body and the main sun
+		protected readonly IResourceBroker resourceBroker = new ResourceBroker();
 
         internal bool IsNight => this.angle > 90;
         internal bool IsDay => this.angle <= 90;
@@ -616,9 +617,7 @@ namespace BonVoyage
             if (DetectKerbalism.Found())
                 return;
 
-            IResourceBroker broker = new ResourceBroker();
-
-            this.fuelEnergy.ProcessResources(broker);
+			this.fuelEnergy.ProcessResources(this.resourceBroker);
         }
 
 

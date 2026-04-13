@@ -341,8 +341,7 @@ namespace BonVoyage
             }
 
             // Get fuel amount
-            IResourceBroker broker = new ResourceBroker();
-            if (!this.fuelEnergy.CheckResources(broker))
+			if (!this.fuelEnergy.CheckResources(this.resourceBroker))
             {
                 ScreenMessages.PostScreenMessage(Localizer.Format("#LOC_BV_Warning_NotEnoughFuel"), 5f).color = CommonWindowProperties.Message_Colour_Warning_User_Error;
                 return false;

@@ -68,10 +68,12 @@ namespace BonVoyage.PowerSources
 		internal readonly HashSet<string> knownInputResources = new HashSet<string>();
 
 		protected readonly Vessel vessel;
+		protected readonly IResourceBroker resourceBroker;
 
 		internal Converter(Vessel vessel)
 		{
 			this.vessel = vessel;
+			this.resourceBroker = new ResourceBroker();
 		}
 
 		internal abstract void Read(ConfigNode controllerNode);

@@ -102,8 +102,7 @@ namespace BonVoyage.PowerSources
 						// Check if we have fuel for converter. If not, then continue without adding output ratio.
 						if (!CheatOptions.InfinitePropellant && r == 0)
 						{
-							IResourceBroker broker = new ResourceBroker();
-							if (broker.AmountAvailable(vessel.rootPart, iList[r].ResourceName, 1, ResourceFlowMode.ALL_VESSEL) == 0)
+							if (this.resourceBroker.AmountAvailable(vessel.rootPart, iList[r].ResourceName, 1, ResourceFlowMode.ALL_VESSEL) == 0)
 								break;
 						}
 
