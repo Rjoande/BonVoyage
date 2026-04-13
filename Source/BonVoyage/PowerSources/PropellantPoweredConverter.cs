@@ -199,6 +199,8 @@ namespace BonVoyage.PowerSources
 
 		internal override void Update(ref double deltaT, ref double deltaTOver)
 		{
+			if (CheatOptions.InfinitePropellant) return;
+
 			for (int i = 0; i < propellants.Count; ++i)
 			{
 				propellants[i].CurrentAmountUsed += propellants[i].FuelFlow * deltaT;
@@ -216,6 +218,8 @@ namespace BonVoyage.PowerSources
 
 		internal override bool CheckResources(IResourceBroker broker)
 		{
+			if (CheatOptions.InfinitePropellant) return true;
+
 			bool r = true;
 			base.ProcessResources(broker);
 			Log.dbg("CheckResources {0} found propellants", this.propellants.Count);
@@ -235,6 +239,9 @@ namespace BonVoyage.PowerSources
 
 		internal override bool ProcessResources(IResourceBroker broker)
 		{
+			if (!this.Use) return false;
+			if (CheatOptions.InfinitePropellant) return true;
+
 			base.ProcessResources(broker);
 
 			for (int i = 0; i < this.propellants.Count; ++i)

@@ -411,8 +411,7 @@ namespace BonVoyage
                 return;
             }
 
-            if (!CheatOptions.InfinitePropellant)
-				this.fuelEnergy.Update(ref deltaT, ref deltaTOver);
+			this.fuelEnergy.Update(ref deltaT, ref deltaTOver);
 
             double deltaS = AverageSpeed * deltaT; // Distance delta from the last update
             distanceTravelled += deltaS;

@@ -206,6 +206,8 @@ namespace BonVoyage.PowerSources
 
 		internal override void Update(ref double deltaT, ref double deltaTOver)
 		{
+			if (CheatOptions.InfiniteElectricity) return;
+
 			List<Resource> iList = this.InputResources;
 			for (int i = 0; i < iList.Count; ++i)
 			{
@@ -226,6 +228,7 @@ namespace BonVoyage.PowerSources
 		internal override bool CheckResources(IResourceBroker broker)
 		{
 			if (!this.Use) return true;	// Cheat the caller on thinking there're resorces available.
+			if (CheatOptions.InfiniteElectricity) return true;
 
 			bool r = true;
 			Log.dbg("CheckResources found {0} resources", this.InputResources.Count);
@@ -245,7 +248,9 @@ namespace BonVoyage.PowerSources
 
 		internal override bool ProcessResources(IResourceBroker broker)
 		{
-			if (this.Use)
+			if (!this.Use) return false;
+			if (CheatOptions.InfiniteElectricity) return true;
+
 			{
 				List<Resource> iList = this.InputResources;
 				for (int i = 0; i < iList.Count; ++i)
