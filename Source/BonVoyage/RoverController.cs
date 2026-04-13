@@ -425,22 +425,12 @@ namespace BonVoyage
 				}
 			}
 
-            // Get fuel amount if fuel cells are used
-            if (fuelEnergy.Use && !CheatOptions.InfinitePropellant)
-            {
-                IResourceBroker broker = new ResourceBroker();
-				List<Resource> iList = fuelEnergy.InputResources;
-                for (int i = 0; i < iList.Count; ++i)
-                {
-                    iList[i].MaximumAmountAvailable = broker.AmountAvailable(vessel.rootPart, iList[i].Name, 1, ResourceFlowMode.ALL_VESSEL);
-
-                    if (iList[i].MaximumAmountAvailable == 0)
-                    {
-                        ScreenMessages.PostScreenMessage(Localizer.Format("#LOC_BV_Warning_NotEnoughFuel"), 5f).color = CommonWindowProperties.Message_Colour_Warning_User_Error;
-                        return false;
-                    }
-                }
-            }
+			// Check fuel amount if fuel cells are used
+			if (!this.fuelEnergy.CheckResources(this.resourceBroker))
+			{
+				ScreenMessages.PostScreenMessage(Localizer.Format("#LOC_BV_Warning_NotEnoughFuel"), 5f).color = CommonWindowProperties.Message_Colour_Warning_User_Error;
+				return false;
+			}
 
 			// A SpeedReducion of 100% means we are kaput. No movement possible due no power available.
 			if (1 == this.SpeedReduction)

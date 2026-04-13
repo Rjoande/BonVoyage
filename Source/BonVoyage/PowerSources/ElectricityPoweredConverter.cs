@@ -224,7 +224,26 @@ namespace BonVoyage.PowerSources
 			}
 		}
 
-		internal override bool CheckResources(IResourceBroker broker) => true;
+		internal override bool CheckResources(IResourceBroker broker)
+		{
+			if (!this.Use) return true;	// Cheat the caller on thinking there're resorces available.
+
+			bool r = true;
+			Log.dbg("CheckResources found {0} resources", this.InputResources.Count);
+			for (int i = 0; i < this.InputResources.Count; ++i)
+			{
+				Resource p = this.InputResources[i];
+
+				// Exactly why we need to do this here?
+				p.MaximumAmountAvailable = broker.AmountAvailable(vessel.rootPart, p.Name, 1, ResourceFlowMode.ALL_VESSEL);
+
+				Log.dbg("CheckResources {0} {1}", p.Name, p.MaximumAmountAvailable);
+				r &= (p.MaximumAmountAvailable > 0);
+			}
+
+			return r;
+		}
+
 		internal override bool ProcessResources(IResourceBroker broker)
 		{
 			if (this.Use)
