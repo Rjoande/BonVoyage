@@ -117,23 +117,23 @@ namespace BonVoyage
 			}
 		}
 
-		internal virtual double AverageSpeed { get { return 0; } }
+		internal virtual double CalcAverageSpeed() => 0;
 		internal string AverageSpeedAsText
 		{
 			get
 			{
-				double avs = this.AverageSpeed;
+				double avs = this.CalcAverageSpeed();
 				if (double.IsNaN(avs) || double.IsInfinity(avs)) return "---";
 				return avs.ToString("0.##") + " m/s";
 			}
 		}
 
-		internal double EstimatedTimeOfArrival => this.RemainingDistanceToTarget / this.AverageSpeed;
+		internal double EstimatedTimeOfArrival() => this.RemainingDistanceToTarget / this.CalcAverageSpeed();
 		internal string EstimatedTimeOfArrivalAsText
 		{
 			get
 			{
-				double eta = this.EstimatedTimeOfArrival;
+				double eta = this.EstimatedTimeOfArrival();
 				if (double.IsNaN(eta) || double.IsInfinity(eta)) return "---";
 				TimeSpan ts = TimeSpan.FromSeconds(eta);
 				return ts.ToString(@"d\.hh\:mm\:ss");
@@ -143,7 +143,7 @@ namespace BonVoyage
 		{
 			get
 			{
-				double eta = this.EstimatedTimeOfArrival;
+				double eta = this.EstimatedTimeOfArrival();
 				if (double.IsNaN(eta) || double.IsInfinity(eta)) return "---";
 				TimeSpan ts = TimeSpan.FromSeconds(eta);
 				return Localizer.Format("#LOC_BV_Control_ETA_Tooltip", ts.Days, ts.Hours, ts.Minutes, ts.Seconds);
@@ -537,7 +537,6 @@ namespace BonVoyage
                     ScreenMessages.PostScreenMessage(Localizer.Format("#LOC_BV_AutopilotActive"), 14f).color = CommonWindowProperties.Message_Colour_Confirm_Restrictions;
                 return;
             }
-
             if (!active || vessel.loaded)
                 return;
 

@@ -34,7 +34,7 @@ namespace BonVoyage
     {
         #region internal properties
 
-		internal override double AverageSpeed =>
+		internal override double CalcAverageSpeed() =>
 			(this.IsDay)
 				? (this.moveController.averageSpeed * speedMultiplier)
 				: (averageSpeedAtNight * speedMultiplier)
@@ -413,7 +413,8 @@ namespace BonVoyage
 
 			this.fuelEnergy.Update(ref deltaT, ref deltaTOver);
 
-            double deltaS = AverageSpeed * deltaT; // Distance delta from the last update
+			double deltaS = this.CalcAverageSpeed() * deltaT; // Distance delta from the last update
+            Log.dbg("ShipController.update deltaS = {0}; deltaT={1}", deltaS, deltaT);
             distanceTravelled += deltaS;
 
             if (distanceTravelled >= distanceToTarget) // We reached the target

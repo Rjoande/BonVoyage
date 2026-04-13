@@ -34,7 +34,7 @@ namespace BonVoyage
     {
         #region internal properties
 
-		internal override double AverageSpeed =>
+		internal override double CalcAverageSpeed() =>
 				this.IsDay || this.batteries.PowerIsAvailable
 					? (this.moveController.averageSpeed * this.speedMultiplier)
 					: (this.averageSpeedAtNight * this.speedMultiplier)
@@ -64,7 +64,7 @@ namespace BonVoyage
 				if (this.batteries.AllowNoGeneratedPower)
 				{
 					double nightLength = this.vessel.mainBody.rotationPeriod / 2; // half a day in seconds;
-					double timeToTarget = this.RemainingDistanceToTarget / this.AverageSpeed;
+					double timeToTarget = this.RemainingDistanceToTarget / this.CalcAverageSpeed();
 					if (nightLength > timeToTarget)
 					{
 						double totalEc = this.batteries.ECPerSecondConsumed * nightLength; // Total energy consumed by a whole night driving.
@@ -516,7 +516,7 @@ namespace BonVoyage
                 return;
             }
 
-            double deltaS = AverageSpeed * deltaT; // Distance delta from the last update
+			double deltaS = this.CalcAverageSpeed() * deltaT; // Distance delta from the last update
             distanceTravelled += deltaS;
 
             if (distanceTravelled >= distanceToTarget) // We reached the target

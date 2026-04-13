@@ -33,7 +33,7 @@ namespace BonVoyage
     {
         #region internal properties
 
-        internal override double AverageSpeed { get { return this.moveController.averageSpeed; } }
+        internal override double CalcAverageSpeed() => this.moveController.averageSpeed;
 
         #endregion
 
@@ -165,7 +165,7 @@ namespace BonVoyage
 
             this.fuelEnergy.Update(ref deltaT, ref deltaTOver);
 
-            double deltaS = AverageSpeed * deltaT; // Distance delta from the last update
+			double deltaS = this.CalcAverageSpeed() * deltaT; // Distance delta from the last update
             distanceTravelled += deltaS;
 
             if (distanceTravelled >= distanceToTarget) // We reached the target
