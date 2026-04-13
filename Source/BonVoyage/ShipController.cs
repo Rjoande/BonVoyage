@@ -283,7 +283,7 @@ namespace BonVoyage
 				}
 
 				// Throttle
-				requiredPower = ((EngineController)this.moveController).MaxThrust * throttleCap;
+				this.requiredPower = ((EngineController)this.moveController).PowerRequired * throttleCap;
 
 				Log.dbg("throttleCap: {0}; dragCap:{1}; requiredPower:{2}", throttleCap, dragCap, requiredPower);
 

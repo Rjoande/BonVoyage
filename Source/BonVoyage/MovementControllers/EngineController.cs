@@ -43,6 +43,7 @@ namespace BonVoyage.MovementControllers
 
 		private EngineTestResult engineTestResult = new EngineTestResult();		// Result of a test of engines
 		internal double MaxThrust => this.engineTestResult.maxThrustSum;
+		internal double PowerRequired => this.engineTestResult.powerRequired;
 
 		internal EngineController(Vessel vessel, ConfigNode moduleConfigNode) : base(vessel, moduleConfigNode)
 		{
@@ -60,7 +61,7 @@ namespace BonVoyage.MovementControllers
 
 			// Sum it
 			this.engineTestResult.maxThrustSum = testResultStockEngines.maxThrustSum + testResultBGRotors.maxThrustSum;
-			this.engineTestResult.powerRequired = testResultStockEngines.powerRequired + testResultBGRotors.powerRequired;
+			this.engineTestResult.powerRequired = /*testResultStockEngines.powerRequired +*/ testResultBGRotors.powerRequired; // NOTE: Fuel Engines **DO NOT** require EC!!
 			this.engineTestResult.maxThrustSum *= (Convert.ToDouble(throttle) / 100);
 		}
 
