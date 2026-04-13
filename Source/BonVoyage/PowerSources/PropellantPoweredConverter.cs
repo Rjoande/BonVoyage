@@ -222,7 +222,7 @@ namespace BonVoyage.PowerSources
 
 			bool r = true;
 			base.ProcessResources(broker);
-			Log.dbg("CheckResources {0} found propellants", this.propellants.Count);
+			Log.dbg("CheckResources found {0} propellants", this.propellants.Count);
 			for (int i = 0; i < this.propellants.Count; ++i)
 			{
 				Fuel p = this.propellants[i];

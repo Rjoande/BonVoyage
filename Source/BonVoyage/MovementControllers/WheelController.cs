@@ -45,6 +45,8 @@ namespace BonVoyage.MovementControllers
 				this.online = online;
 				this.maxWheelRadius = maxWheelRadius;
 			}
+
+			public override string ToString() => string.Format("WheelTestResult powerRequired:{0}; maxSpeedSum:{1}; operable:{2}; damaged:{3}; online:{4}; maxWheelRadius:{5}.", this.powerRequired, this.maxSpeedSum, this.operable, this.damaged, this.online, this.maxWheelRadius);
 		}
 
 		internal int wheelsPercentualModifier;							// Speed modifier based on wheels
@@ -66,8 +68,12 @@ namespace BonVoyage.MovementControllers
 
 			// Test stock wheels
 			WheelTestResult testResultStockWheels = CheckStockWheels();
+			Log.dbg("testResultStockWheels : {0}", testResultStockWheels.ToString() );
+
 			// Test KSPWheels
 			WheelTestResult testResultKSPkWheels = CheckKSPWheels();
+			Log.dbg("testResultKSPkWheels : {0}", testResultKSPkWheels.ToString() );
+
 			// Sum it
 			this.wheelTestResult.powerRequired = testResultStockWheels.powerRequired + testResultKSPkWheels.powerRequired;
 			this.wheelTestResult.maxSpeedSum = testResultStockWheels.maxSpeedSum + testResultKSPkWheels.maxSpeedSum;

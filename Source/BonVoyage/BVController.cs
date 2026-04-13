@@ -155,7 +155,7 @@ namespace BonVoyage
         internal double electricPower_Solar; // Electric power from solar panels
         internal double electricPower_Other; // Electric power from other power sources
 		internal double electricPower => this.electricPower_Solar + this.electricPower_Other;
-        internal double requiredPower; // Power required by wheels and engines
+        internal double requiredPower; // Power required by wheels
         internal readonly Batteries batteries = new Batteries(); // Information about batteries
         internal readonly Converter fuelEnergy;      // Information about fuel cells or propellant engines.
 		internal readonly PowerSupply solarPower;    // Information about solar panels

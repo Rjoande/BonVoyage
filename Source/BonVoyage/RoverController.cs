@@ -77,6 +77,7 @@ namespace BonVoyage
 					speedReduction = (this.requiredPower - this.electricPower) / this.requiredPower;
 					speedReduction = (speedReduction > 0.75) ? 1 : speedReduction;
 				}
+				Log.dbg("SpeedReduction : {0}", speedReduction);
 				return speedReduction;
 			}
 		}

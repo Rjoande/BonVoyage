@@ -30,7 +30,7 @@ namespace BonVoyage.MovementControllers
 		private struct EngineTestResult
 		{
 			internal double maxThrustSum; // Sum of max thrusts of all enabled engines
-			internal double powerRequired; // Total power required
+			internal double powerRequired; // Total EC power required
 
 			internal EngineTestResult(double maxThrustSum, double powerRequired)
 			{
