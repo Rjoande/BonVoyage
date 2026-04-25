@@ -89,9 +89,6 @@ namespace BonVoyage.MovementControllers
 		/// <returns></returns>
 		private EngineTestResult CheckStockEngines()
 		{
-			double powerRequired = 0;
-			double maxThrustSum = 0;
-
 			// Get jet engines' modules (and also rocket, saving a loop)
 			List<Part> jets = new List<Part>();
 			List<Part> rockets = new List<Part>();
@@ -104,6 +101,8 @@ namespace BonVoyage.MovementControllers
 					rockets.Add(part);
 			}
 
+			double maxThrustSum = 0;
+			double powerRequired = 0;
 			for (int i = 0; i < jets.Count; ++i)
 			{
 				List<ModuleEnginesFX> enginesFx = jets[i].FindModulesImplementing<ModuleEnginesFX>();
@@ -114,7 +113,7 @@ namespace BonVoyage.MovementControllers
 						if (!enginesFx[k].engineShutdown && enginesFx[k].isOperational)
 						{
 							// Max thrust
-							maxThrustSum += enginesFx[k].maxThrust * enginesFx[k].thrustPercentage / 100;
+							maxThrustSum += enginesFx[k].maxThrust * enginesFx[k].thrustPercentage;
 
 							// Propellants used in ISP computation - what is not used is usually air
 							for (int p = 0; p < enginesFx[k].propellants.Count; p++)
@@ -124,7 +123,7 @@ namespace BonVoyage.MovementControllers
 									// For electric engines - save required power and don't add it to propellants
 									if (enginesFx[k].propellants[p].name == "ElectricCharge")
 									{
-										powerRequired += enginesFx[k].getMaxFuelFlow(enginesFx[k].propellants[p]) * enginesFx[k].thrustPercentage / 100;
+										powerRequired += enginesFx[k].getMaxFuelFlow(enginesFx[k].propellants[p]) * enginesFx[k].thrustPercentage;
 										continue;
 									}
 								}
@@ -133,6 +132,9 @@ namespace BonVoyage.MovementControllers
 					}
 				}
 			}
+
+			maxThrustSum /= 100;
+			powerRequired /= 100;
 
 			for (int i = 0; i < rockets.Count; ++i)
 			{

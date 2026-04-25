@@ -27,8 +27,8 @@ namespace BonVoyage.MovementControllers
 		/// </summary>
 		private struct WheelTestResult
 		{
-			internal double powerRequired; // Total power required
-			internal double maxSpeedSum; // Sum of max speeds of all online wheels
+			internal double powerRequired; // Total power required (0 to 1.0)
+			internal double maxSpeedSum; // Sum of max speeds of all online wheels (0 to 1.0)
 			internal int inTheAir; // Count of wheels in the air
 			internal int operable; // Count of operable wheels
 			internal int damaged; // Count of damaged wheels
@@ -117,8 +117,6 @@ namespace BonVoyage.MovementControllers
 		/// <returns></returns>
 		private WheelTestResult CheckStockWheels()
 		{
-			double powerRequired = 0;
-			double maxSpeedSum = 0;
 			int inTheAir = 0;
 			int operable = 0;
 			int damaged = 0;
@@ -134,6 +132,8 @@ namespace BonVoyage.MovementControllers
 					wheels.Add(part);
 			}
 
+			double powerRequired = 0;
+			double maxSpeedSum = 0;
 			for (int i = 0; i < wheels.Count; ++i)
 			{
 				ModuleWheelBase wheelBase = wheels[i].FindModuleImplementing<ModuleWheelBase>();
@@ -173,13 +173,15 @@ namespace BonVoyage.MovementControllers
 					// Wheel is on
 					if (wheelMotor.motorEnabled)
 					{
-						powerRequired += wheelMotor.avgResRate * (wheelMotor.driveLimiter / 100);
-						maxSpeedSum += wheelMotor.GetMaxSpeed() * (wheelMotor.driveLimiter / 100);
+						powerRequired += wheelMotor.avgResRate * wheelMotor.driveLimiter;
+						maxSpeedSum += wheelMotor.GetMaxSpeed() * wheelMotor.driveLimiter;
 						++online;
 					}
 				}
 			}
 
+			powerRequired /= 100;
+			maxSpeedSum /= 100;
 			return new WheelTestResult(powerRequired, maxSpeedSum, inTheAir, operable, damaged, online, maxWheelRadius);
 		}
 
@@ -241,7 +243,7 @@ namespace BonVoyage.MovementControllers
 					if (!(bool)wheelMotors[m].Fields.GetValue("motorLocked"))
 					{
 						++online;
-						powerRequired += (float)wheelMotors[m].Fields.GetValue("maxECDraw") * (float)wheelMotors[m].Fields.GetValue("motorOutput") / 100; // Motor output can be limited by a slider
+						powerRequired += (float)wheelMotors[m].Fields.GetValue("maxECDraw") * (float)wheelMotors[m].Fields.GetValue("motorOutput"); // Motor output can be limited by a slider
 						if (maxSafeSpeed > 0)
 							maxSpeedSum += Math.Min((float)wheelMotors[m].Fields.GetValue("maxDrivenSpeed"), maxSafeSpeed);
 						else
@@ -257,7 +259,7 @@ namespace BonVoyage.MovementControllers
 					if (!(bool)wheelTracks.Fields.GetValue("motorLocked"))
 					{
 						online += 2;
-						powerRequired += (float)wheelTracks.Fields.GetValue("maxECDraw") * (float)wheelTracks.Fields.GetValue("motorOutput") / 100; // Motor output can be limited by a slider
+						powerRequired += (float)wheelTracks.Fields.GetValue("maxECDraw") * (float)wheelTracks.Fields.GetValue("motorOutput"); // Motor output can be limited by a slider
 						if (maxSafeSpeed > 0)
 							maxSpeedSum += 2 * Math.Min((float)wheelTracks.Fields.GetValue("maxDrivenSpeed"), maxSafeSpeed);
 						else
@@ -275,6 +277,7 @@ namespace BonVoyage.MovementControllers
 				}
 			}
 
+			powerRequired /= 100;
 			return new WheelTestResult(powerRequired, maxSpeedSum, inTheAir, operable, damaged, online, maxWheelRadius);
 		}
 
