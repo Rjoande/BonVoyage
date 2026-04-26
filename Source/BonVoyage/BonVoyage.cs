@@ -45,7 +45,7 @@ namespace BonVoyage
         internal ControlWindowModel ControlModel; // Control view's model
         internal bool ControlViewVisible { get { return controlViewVisible; } }
 
-        internal Dictionary<Guid, BVController> BVControllers; // Controllers list
+        internal readonly Dictionary<Guid, BVController> BVControllers = new Dictionary<Guid, BVController>(); // Controllers list
 
         internal bool GamePaused; // Is game paused?
         internal bool ShowUI; // Is UI vissible? (F2 pressed)
@@ -122,7 +122,7 @@ namespace BonVoyage
             MapMode = false;
             lastUpdate = DateTime.Now;
 
-            BVControllers = new Dictionary<Guid, BVController>();
+			this.BVControllers.Clear();
 
             Configuration.Load();
         }
@@ -140,6 +140,7 @@ namespace BonVoyage
             GameEvents.onVesselChange.Add(OnVesselChange);
             GameEvents.onLevelWasLoaded.Add(OnLevelWasLoaded);
             GameEvents.onVesselGoOffRails.Add(OnVesselGoOffRails);
+            GameEvents.onVesselWillDestroy.Add(OnVesselWillDestroy);
             GameEvents.onHideUI.Add(OnHideUI);
             GameEvents.onShowUI.Add(OnShowUI);
             GameEvents.onGamePause.Add(OnGamePause);
@@ -168,6 +169,7 @@ namespace BonVoyage
             GameEvents.onVesselChange.Remove(OnVesselChange);
             GameEvents.onLevelWasLoaded.Remove(OnLevelWasLoaded);
             GameEvents.onVesselGoOffRails.Remove(OnVesselGoOffRails);
+            GameEvents.onVesselWillDestroy.Remove(OnVesselWillDestroy);
             GameEvents.onHideUI.Remove(OnHideUI);
             GameEvents.onShowUI.Remove(OnShowUI);
             GameEvents.onGamePause.Remove(OnGamePause);
@@ -352,8 +354,15 @@ namespace BonVoyage
             }
         }
 
-        #endregion
+		private void OnVesselWillDestroy(Vessel vessel)
+		{
+			BVController controller;
+			if (!BVControllers.TryGetValue(vessel.id, out controller)) return;
+			this.BVControllers.Remove(vessel.id);
+			controller.Deactivate();
+		}
 
+		#endregion
 
         #region App launcher
 
