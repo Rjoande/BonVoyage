@@ -40,10 +40,12 @@ namespace BonVoyage.MovementControllers
 
 		public override bool MoveSafely(double latitude, double longitude)
 		{
-			double altitude = GeoUtils.TerrainHeightAt(latitude, longitude, this.vessel.mainBody);
+			CelestialBody body = this.vessel.mainBody;
+			double terrainHeight = GeoUtils.TerrainHeightAt(latitude, longitude, body);
+
 			if (FlightGlobals.ActiveVessel != null)
 			{
-				Vector3d newPos = this.vessel.mainBody.GetWorldSurfacePosition(latitude, longitude, altitude);
+				Vector3d newPos = body.GetWorldSurfacePosition(latitude, longitude, terrainHeight);
 				Vector3d actPos = FlightGlobals.ActiveVessel.GetWorldPos3D();
 				double distance = Vector3d.Distance(newPos, actPos);
 				if (distance <= 2400)
@@ -52,11 +54,15 @@ namespace BonVoyage.MovementControllers
 
 			this.vessel.latitude = latitude;
 			this.vessel.longitude = longitude;
-			if (this.vessel.situation == Vessel.Situations.SPLASHED)
-				this.vessel.altitude = vesselHeightFromTerrain;
-			else
-				this.vessel.altitude = altitude + vesselHeightFromTerrain;
 
+			if (this.vessel.situation == Vessel.Situations.SPLASHED)
+				this.vessel.altitude = this.vesselHeightFromTerrain;
+			else
+				this.vessel.altitude = terrainHeight + this.vesselHeightFromTerrain;
+
+			Log.dbg("MoveSafely {0}, {1}:{2}:{3}, {4}, {5}, pqs {6}, alt {7}, radar {8}, terrain {9}"
+					, this.vessel.vesselName, latitude, longitude, terrainHeight, this.vessel.mainBody.ocean, this.vessel.situation, this.vessel.pqsAltitude, this.vessel.altitude, this.vessel.radarAltitude, this.vessel.terrainAltitude
+				);
 			return true;
 		}
 	}
