@@ -795,7 +795,7 @@ namespace BonVoyage
 		private void calcCurrentSituation()
 		{
 			if (this.vessel == FlightGlobals.ActiveVessel && this.manned)
-				FlightGlobals.ActiveVessel.ActionGroups.SetGroup(KSPActionGroup.Light, this.IsNight);
+				this.vessel.ActionGroups.SetGroup(KSPActionGroup.Light, this.IsNight);
 		}
 
 	}

@@ -263,10 +263,8 @@ namespace BonVoyage
 		private void calcCurrentSituation()
 		{
 			if (this.vessel != FlightGlobals.ActiveVessel) return;
-
-			KerbalEVA m = this.vessel.FindPartModuleImplementing<KerbalEVA>();
-			m.lampOn = this.IsNight;
+			this.vessel.ActionGroups.SetGroup(KSPActionGroup.Light, this.IsNight);
 		}
-    }
+	}
 
 }
